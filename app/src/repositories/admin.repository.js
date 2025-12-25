@@ -1,10 +1,10 @@
 import { query } from "../../database.js"
 
-export const insertLibrarian = async(role_id, full_name, email, password_hash) => {
+export const insertLibrarian = async(full_name, email, password_hash) => {
     return await query(
         `INSERT INTO users (role_id, full_name, email, password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
-        [role_id, full_name, email, password_hash]
+        [2, full_name, email, password_hash]
     );
 };
 
@@ -62,7 +62,8 @@ export const getMemberBorrowHistory = async(user_id) => {
     return await query(
         `SELECT * FROM 
         users u LEFT JOIN borrow_records br 
-        ON u.user_id = br.user_id
+        ON u.user_id = br.user_id RIGHT JOIN books b
+        ON br.book_id = b.book_id
         WHERE u.role_id = 3 AND u.user_id = $1`,
         [user_id]
     );
