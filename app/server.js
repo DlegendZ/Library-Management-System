@@ -7,6 +7,5 @@ app.use(express.json());
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
-    console.log(`SERVER IS RUNNING AT http://localhost:${PORT}`);
+  console.log(`SERVER IS RUNNING AT http://localhost:${PORT}`);
 });
-
