@@ -153,9 +153,10 @@ export const insertCategory = async (name, description) => {
   );
 };
 
-export const updateCategory = async (name, description) => {
-  return await query(`UPDATE category SET name = $1, description = $2`, [
+export const updateCategory = async (category_id, name, description) => {
+  return await query(`UPDATE category SET name = $1, description = $2 WHERE category_id = $3`, [
     name,
     description,
+    category_id
   ]);
 };
