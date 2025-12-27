@@ -77,7 +77,7 @@ export const returnBook = async (borrow_id) => {
   );
 };
 
-export const getBorrowHistory = async () => {
+export const getBorrowRecords = async () => {
   return await query(
     `SELECT * FROM users u LEFT JOIN borrow_records br 
         ON u.user_id = br.user_id RIGHT JOIN books b
