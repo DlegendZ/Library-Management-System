@@ -40,7 +40,7 @@ export const emailValidator = (email) => {
   }
 };
 
-export const statusValidator = (...args) => {
+export const statusValidator = (status) => {
   //'active', 'suspended'
   //'available', 'unavailable'
   //'borrowed', 'returned', 'overdue'
@@ -48,15 +48,16 @@ export const statusValidator = (...args) => {
 
   if (
     !(
-      (args[0] === "active" && args[1] === "suspended") ||
-      (args[0] === "available" && args[1] === "unavailable") ||
-      (args[0] === "borrowed" &&
-        args[1] === "returned" &&
-        args[2] === "overdue") ||
-      (args[0] === "unpaid" &&
-        args[1] === "partial" &&
-        args[2] === "paid" &&
-        args[3] === "waived")
+      status === "active" ||
+      status === "suspended" ||
+      status === "available" ||
+      status === "unavailable" ||
+      status === "borrowed" ||
+      status === "returned" ||
+      status === "overdue" ||
+      status === "unpaid" ||
+      status === "partial" ||
+      (status === "paid") | (status === "waived")
     )
   ) {
     throw new Error("Invalid Status");
@@ -111,14 +112,14 @@ export const isbnValidator = (isbn) => {
 };
 
 export const totalCopiesValidator = (total_copies) => {
-    if (!total_copies) {
+  if (!total_copies) {
     throw new Error("Total copies is required.");
   }
 
   if (!Number.isInteger(total_copies) || !(total_copies >= 1)) {
     throw new Error("Total copies must be at least 1.");
   }
-}
+};
 
 export const availableCopiesValidator = (total_copies, available_copies) => {
   if (!available_copies) {
@@ -132,24 +133,30 @@ export const availableCopiesValidator = (total_copies, available_copies) => {
   if (!(available_copies <= total_copies)) {
     throw new Error("Available copies cannot exceed total copies.");
   }
-}
+};
 
 export const roleCatNameValidator = (name) => {
-    if (!name || name.trim() === "") {
-        throw new Error("name is required.");
-    }
+  if (!name || name.trim() === "") {
+    throw new Error("name is required.");
+  }
 
-    if (!(typeof name === "string" && (name.length >= 2 && name.length <= 100))) {
-        throw new Error("name length is invalid.");
-    }
+  if (!(typeof name === "string" && name.length >= 2 && name.length <= 100)) {
+    throw new Error("name length is invalid.");
+  }
 
-    if (!/^[A-Za-z0-9 ]+$/.test(name)) {
-        throw new Error("name contains invalid characters.");
-    }
-}
+  if (!/^[A-Za-z0-9 ]+$/.test(name)) {
+    throw new Error("name contains invalid characters.");
+  }
+};
 
 export const roleCatDescValidator = (description) => {
-    if (!(typeof description === "string" && (description.length >= 0 && description.length <= 255))) {
-        throw new Error("description length is invalid.");
-    }
-}
+  if (
+    !(
+      typeof description === "string" &&
+      description.length >= 0 &&
+      description.length <= 255
+    )
+  ) {
+    throw new Error("description length is invalid.");
+  }
+};
