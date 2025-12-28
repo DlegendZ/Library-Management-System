@@ -1,14 +1,5 @@
 import * as admin from "../repositories/admin.repository.js";
-import nameValidator from "./validators/name.validator.js";
-import emailValidator from "./validators/email.validator.js";
-import {
-  bookValidatorSimple,
-  bookValidatorAll,
-} from "./validators/book.validator.js";
-import {
-  categoryValidatorAll,
-  categoryValidatorSimple,
-} from "./validators/category.validator.js";
+import * as validator from "./validators/validator.js";
 
 function getRowOrNull(result) {
   if (result.rows.length === 0) {
@@ -19,8 +10,8 @@ function getRowOrNull(result) {
 }
 
 export const registerLibrarian = async (full_name, email, password_hash) => {
-  nameValidator(full_name);
-  emailValidator(email);
+  validator.humanNameValidator(full_name);
+  validator.emailValidator(email);
 
   const result = await admin.insertLibrarian(full_name, email, password_hash);
   return getRowOrNull(result);

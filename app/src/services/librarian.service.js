@@ -1,6 +1,5 @@
 import * as librarian from "../repositories/librarian.repository.js";
-import nameValidator from "./validators/name.validator.js";
-import emailValidator from "./validators/email.validator.js";
+import * as validator from "./validators/validator.js";
 
 function getRowOrNull(result) {
   if (result.rows.length === 0) {
@@ -13,6 +12,8 @@ function getRowOrNull(result) {
 export const registerMember = async (full_name, email, password_hash) => {
   nameValidator(full_name);
   emailValidator(email);
+
+  
 
   const result = await librarian.insertMember(full_name, email, password_hash);
   return getRowOrNull(result);
