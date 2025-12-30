@@ -1,42 +1,73 @@
+class badReqError extends Error {
+  constructor(message) {
+    super(message);
+    this.status = 400;
+  }
+}
+
 export const idValidator = (id) => {
   if (!id) {
-    throw new Error("ID is required.");
+    throw new badReqError("ID is required.");
   }
 
   if (!(Number.isInteger(id) && id > 0)) {
-    throw new Error("ID must be a positive integer.");
+    throw new badReqError("ID must be a positive integer.");
   }
 };
 
 export const humanNameValidator = (name) => {
   if (!name || name.trim() === "") {
-    throw new Error("name is required.");
+    throw new badReqError("name is required.");
   }
 
   if ((name.trim().match(/ /g) || []).length === 0) {
-    throw new Error("name must contain at least two words.");
+    throw new badReqError("name must contain at least two words.");
   }
 
   if (!/^[A-Za-z ]+$/.test(name)) {
-    throw new Error("name contains invalid characters.");
+    throw new badReqError("name contains invalid characters.");
   }
 
   if (!(name.length >= 2 && name.length <= 100)) {
-    throw new Error("name must be between 2 and 100 characters.");
+    throw new badReqError("name must be between 2 and 100 characters.");
   }
 };
 
 export const emailValidator = (email) => {
   if (!email || email.trim() === "") {
-    throw new Error("Email is required.");
+    throw new badReqError("Email is required.");
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    throw new Error("Email format is invalid.");
+    throw new badReqError("Email format is invalid.");
   }
 
   if (!(email.length <= 254)) {
-    throw new Error("Email length exceeds the limit.");
+    throw new badReqError("Email length exceeds the limit.");
+  }
+};
+
+export const passwordValidator = (password) => {
+  if (!password || password.trim() === "") {
+    throw new badReqError("Password is required.");
+  }
+  if (!(password.length >= 8 && password.length <= 64)) {
+    throw new badReqError("Password must be at least 8 characters long.");
+  }
+  if (/[ ]/.test(password)) {
+    throw new badReqError("Password must not contain spaces.");
+  }
+  if (
+    !(
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    )
+  ) {
+    throw new badReqError(
+      "Password must contain uppercase, lowercase, number, and special character."
+    );
   }
 };
 
@@ -60,13 +91,13 @@ export const statusValidator = (status) => {
       (status === "paid") | (status === "waived")
     )
   ) {
-    throw new Error("Invalid Status");
+    throw new badReqError("Invalid Status");
   }
 };
 
 export const deadlineTimeStampValidator = (due_at) => {
   if (!due_at) {
-    throw new Error("date is required.");
+    throw new badReqError("date is required.");
   }
 
   if (
@@ -77,75 +108,75 @@ export const deadlineTimeStampValidator = (due_at) => {
       )
     )
   ) {
-    throw new Error("date format is invalid.");
+    throw new badReqError("date format is invalid.");
   }
 
   if (!(due_at > new Date().toISOString())) {
-    throw new Error("date must be in the future.");
+    throw new badReqError("date must be in the future.");
   }
 };
 
 export const titleValidator = (title) => {
   if (!title || title.trim() === "") {
-    throw new Error("title is required.");
+    throw new badReqError("title is required.");
   }
 
   if (
     !(title.length >= 1 && title.length <= 255) ||
     !(typeof title === "string")
   ) {
-    throw new Error("Title length is invalid.");
+    throw new badReqError("Title length is invalid.");
   }
 };
 
 export const isbnValidator = (isbn) => {
   if (!isbn || isbn.trim() === "") {
-    throw new Error("ISBN is required.");
+    throw new badReqError("ISBN is required.");
   }
 
   if (
     !/^(?:\d{9}[\dX]|\d{13})$/.test(isbn.replace(/-/g, "")) ||
     !(typeof isbn === "string")
   ) {
-    throw new Error("ISBN format is invalid.");
+    throw new badReqError("ISBN format is invalid.");
   }
 };
 
 export const totalCopiesValidator = (total_copies) => {
   if (!total_copies) {
-    throw new Error("Total copies is required.");
+    throw new badReqError("Total copies is required.");
   }
 
   if (!Number.isInteger(total_copies) || !(total_copies >= 1)) {
-    throw new Error("Total copies must be at least 1.");
+    throw new badReqError("Total copies must be at least 1.");
   }
 };
 
 export const availableCopiesValidator = (total_copies, available_copies) => {
   if (!available_copies) {
-    throw new Error("Available copies is required.");
+    throw new badReqError("Available copies is required.");
   }
 
   if (!Number.isInteger(available_copies) || !(available_copies >= 0)) {
-    throw new Error("Available copies cannot be negative.");
+    throw new badReqError("Available copies cannot be negative.");
   }
 
   if (!(available_copies <= total_copies)) {
-    throw new Error("Available copies cannot exceed total copies.");
+    throw new badReqError("Available copies cannot exceed total copies.");
   }
 };
 
 export const roleCatNameValidator = (name) => {
   if (!name || name.trim() === "") {
-    throw new Error("name is required.");
+    throw new badReqError("name is required.");
   }
 
   if (!(typeof name === "string" && name.length >= 2 && name.length <= 100)) {
-    throw new Error("name length is invalid.");
+    throw new badReqError("name length is invalid.");
   }
 
   if (!/^[A-Za-z0-9 ]+$/.test(name)) {
-    throw new Error("name contains invalid characters.");
+    throw new badReqError("name contains invalid characters.");
   }
 };
 
@@ -157,6 +188,6 @@ export const roleCatDescValidator = (description) => {
       description.length <= 255
     )
   ) {
-    throw new Error("description length is invalid.");
+    throw new badReqError("description length is invalid.");
   }
 };

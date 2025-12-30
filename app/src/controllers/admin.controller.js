@@ -1,7 +1,285 @@
 import * as adminService from "../services/admin.service.js";
+import * as validator from "../services/validators/validator.js";
+import argon2 from "argon2";
 
-// export const registerLibrarianController = async (req, res) => {
-//     const { full_name, email,} {
+export const registerLibrarianController = async (req, res) => {
+  const { full_name, email, password } = req.body;
 
-//     }
-// }
+  try {
+    validator.passwordValidator(password);
+
+    const password_hash = await argon2.hash(password, {
+      type: argon2.argon2id,
+      memoryCost: 32768,
+      timeCost: 2,
+      parallelism: 1,
+    });
+
+    const result = await adminService.registerLibrarian(
+      full_name,
+      email,
+      password_hash
+    );
+    return res.status(201).json({ message: "Librarian account created." });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const assignRolesController = async (req, res) => {
+  const { user_id, role_id } = req.body;
+  try {
+    const result = await adminService.assignRoles(user_id, role_id);
+    return res.status(200).json({ message: "Updated user's role" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const assignStatusController = async (req, res) => {
+  const { user_id, status } = req.body;
+  try {
+    const result = await adminService.assignStatus(user_id, status);
+    return res.status(200).json({ message: "Updated user's status" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewAllUsersController = async (req, res) => {
+  try {
+    const result = await adminService.viewAllUsers();
+    return res.status(200).json({ message: "Displayed all users" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewRollAssignmentsController = async (req, res) => {
+  try {
+    const result = await adminService.viewRollAssignments();
+    return res.status(200).json({ message: "Roles displayed" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewAllBooksController = async (req, res) => {
+  try {
+    const result = await adminService.viewAllBooks();
+    return res.status(200).json({ message: "Displayed all books" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewAllCategoriesController = async (req, res) => {
+  try {
+    const result = await adminService.viewAllCategories();
+    return res.status(200).json({ message: "Displayed all categories" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewBorrowRecordsController = async (req, res) => {
+  try {
+    const result = await adminService.viewBorrowRecords();
+    return res.status(200).json({ message: "Displayed all borrow records" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewFineRecordsController = async (req, res) => {
+  try {
+    const result = await adminService.viewFineRecords();
+    return res.status(200).json({ message: "Displayed all fine records" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewMemberBorrowHistoryController = async (req, res) => {
+  const { user_id } = req.body;
+
+  try {
+    const result = await adminService.viewMemberBorrowHistory(user_id);
+    return res.status(200).json({
+      message: `Displayed all borrow records from user with id : ${user_id}`,
+    });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewBooksWithBorrowersController = async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const result = await adminService.viewBooksWithBorrowers(status);
+    return res
+      .status(200)
+      .json({ message: "Displayed all books with borrowers" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewUsersWithFinesController = async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const result = await adminService.viewUsersWithFines(status);
+    return res.status(200).json({ message: "Displayed all users with fine" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const viewUserByStatusController = async (req, res) => {
+  const { status } = req.body;
+
+  try {
+    const result = await adminService.viewUserByStatus(status);
+    return res.status(200).json({ message: "Display all users by status" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const addBookController = async (req, res) => {
+  const { category_id, isbn, title, author, total_copies, available_copies } =
+    req.body;
+
+  try {
+    const result = await adminService.addBook(
+      category_id,
+      isbn,
+      title,
+      author,
+      total_copies,
+      available_copies
+    );
+    return res.status(200).json({ message: "Added a book" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const updateBookController = async (req, res) => {
+  const {
+    book_id,
+    category_id,
+    isbn,
+    title,
+    author,
+    total_copies,
+    available_copies,
+    status,
+  } = req.body;
+
+  try {
+    const result = await adminService.updateBook(
+      book_id,
+      category_id,
+      isbn,
+      title,
+      author,
+      total_copies,
+      available_copies,
+      status
+    );
+    return res.status(200).json({ message: "updated book's info" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const deleteBookController = async (req, res) => {
+  const { book_id } = req.body;
+
+  try {
+    const result = await adminService.deleteBook(book_id);
+    return res.status(200).json({ message: "Deleted a book" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const addCategoryController = async (req, res) => {
+  const { name, description } = req.body;
+
+  try {
+    const result = await adminService.addCategory(name, description);
+    return res.status(200).json({ message: "Added a category" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const updateCategoryController = async (req, res) => {
+  const { category_id, name, description } = req.body;
+
+  try {
+    const result = await adminService.updateCategory(category_id, name, description);
+    return res.status(200).json({ message: "Updated a category" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
