@@ -4,7 +4,7 @@ export const insertMember = async (full_name, email, password_hash) => {
   return await query(
     `INSERT INTO users (role_id, full_name, email, password_hash) VALUES
         ($1,$2,$3,$4) RETURNING *`,
-    [3, full_name, email, password_hash]
+    [3, full_name, email.toLowerCase(), password_hash]
   );
 };
 

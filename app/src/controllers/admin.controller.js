@@ -1,24 +1,97 @@
 import * as adminService from "../services/admin.service.js";
-import * as validator from "../services/validators/validator.js";
-import argon2 from "argon2";
+import * as authToken from "../authentication/token.js";
+import { query } from "../../database.js";
+
+export const registerAdminController = async (req, res) => {
+  const { full_name, email, password } = req.body;
+
+  try {
+    const result = await adminService.registerAdmin(full_name, email, password);
+    return res.status(201).json({ message: "Admin account created." });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const loginAdminController = (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const { accessToken, refreshToken, refreshId, expires_at } =
+      adminService.loginAdmin(email, password, req);
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      expires: expires_at,
+    });
+
+    return res.status(200).json({ accessToken, refreshId });
+  } catch (err) {
+    console.error("error :", err);
+    if (err.status || err.message === "User not found") {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const refATController = async (req, res) => {
+  //refresh access token
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ error: "Refresh token not found" });
+  const row = await authToken.findRefreshToken(refreshToken);
+  if (!row) return res.status(401).json({ error: "Invalid refresh token" });
+
+  try {
+    const userRes = await query(`SELECT * FROM users WHERE user_id = $1`, [
+      row.user_id,
+    ]);
+    const user = userRes.rows[0];
+    const accessToken = authToken.signAccessToken(user);
+    return res.status(200).json({ accessToken });
+  } catch (err) {
+    console.log("error :", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const logoutAdminController = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  try {
+    if (refreshToken) {
+      const row = await authToken.findRefreshToken(refreshToken);
+      if (row) await authToken.revokeRefreshToken(row.id);
+      res.cookie("refresh_token", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+      });
+
+      res.status(200).json({ message: "Logged out" });
+    } else {
+      res.status(200).json({ message: "Required refresh token" });
+    }
+  } catch (err) {
+    console.error("Error : ", err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 export const registerLibrarianController = async (req, res) => {
   const { full_name, email, password } = req.body;
 
   try {
-    validator.passwordValidator(password);
-
-    const password_hash = await argon2.hash(password, {
-      type: argon2.argon2id,
-      memoryCost: 32768,
-      timeCost: 2,
-      parallelism: 1,
-    });
-
     const result = await adminService.registerLibrarian(
       full_name,
       email,
-      password_hash
+      password
     );
     return res.status(201).json({ message: "Librarian account created." });
   } catch (err) {
@@ -273,7 +346,11 @@ export const updateCategoryController = async (req, res) => {
   const { category_id, name, description } = req.body;
 
   try {
-    const result = await adminService.updateCategory(category_id, name, description);
+    const result = await adminService.updateCategory(
+      category_id,
+      name,
+      description
+    );
     return res.status(200).json({ message: "Updated a category" });
   } catch (err) {
     console.error("error :", err);
@@ -282,4 +359,3 @@ export const updateCategoryController = async (req, res) => {
       .json({ message: err.status ? err.message : "Internal Server Error" });
   }
 };
-

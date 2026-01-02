@@ -1,10 +1,18 @@
 import { query } from "../../database.js";
 
+export const registerAdmin = async (full_name, email, password_hash) => {
+  return await query(
+    `INSERT INTO users (role_id, full_name, email, password_hash)
+        VALUES ($1, $2, $3, $4) RETURNING *`,
+    [1, full_name, email.toLowerCase(), password_hash]
+  );
+};
+
 export const insertLibrarian = async (full_name, email, password_hash) => {
   return await query(
     `INSERT INTO users (role_id, full_name, email, password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
-    [2, full_name, email, password_hash]
+    [2, full_name, email.toLowerCase(), password_hash]
   );
 };
 
@@ -24,6 +32,12 @@ export const updateStatus = async (user_id, status) => {
 
 export const getAllUsers = async () => {
   return await query(`SELECT * FROM users`);
+};
+
+export const getUserByEmail = async (email) => {
+  return await query(`SELECT * FROM users WHERE email = $1`, [
+    email.toLowerCase(),
+  ]);
 };
 
 export const getRolesAssignments = async () => {
@@ -154,9 +168,8 @@ export const insertCategory = async (name, description) => {
 };
 
 export const updateCategory = async (category_id, name, description) => {
-  return await query(`UPDATE category SET name = $1, description = $2 WHERE category_id = $3`, [
-    name,
-    description,
-    category_id
-  ]);
+  return await query(
+    `UPDATE category SET name = $1, description = $2 WHERE category_id = $3`,
+    [name, description, category_id]
+  );
 };
