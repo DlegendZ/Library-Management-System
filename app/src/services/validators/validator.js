@@ -88,7 +88,8 @@ export const statusValidator = (status) => {
       status === "overdue" ||
       status === "unpaid" ||
       status === "partial" ||
-      (status === "paid") | (status === "waived")
+      status === "paid" ||
+      status === "waived"
     )
   ) {
     throw new badReqError("Invalid Status");

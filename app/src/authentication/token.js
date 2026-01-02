@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
-import { query } from "../../database";
+import { query } from "../../database.js";
 
 export function signAccessToken(user) {
   return jwt.sign(

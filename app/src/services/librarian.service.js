@@ -15,7 +15,7 @@ export const loginLibrarian = async (email, password, req) => {
   validator.emailValidator(email);
   validator.passwordValidator(password);
 
-  const userRes = await LibrarianRepo.getUserByEmail(email);
+  const userRes = await librarianRepo.getUserByEmail(email);
   const user = userRes.rows[0];
 
   if (!user) throw new Error("User not found");
@@ -25,7 +25,7 @@ export const loginLibrarian = async (email, password, req) => {
   const accessToken = authToken.signAccessToken(user);
   const refreshToken = authToken.generateRefreshToken();
 
-  const { id: refreshId, expires_at } = authToken.saveRefreshToken({
+  const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
     user,
     refreshToken,
     req,
@@ -74,7 +74,14 @@ export const addBook = async (
   validator.totalCopiesValidator(total_copies);
   validator.availableCopiesValidator(available_copies);
 
-  const result = await librarianRepo.insertBook(book_info);
+  const result = await librarianRepo.insertBook(
+    category_id,
+    isbn,
+    title,
+    author,
+    total_copies,
+    available_copies
+  );
   return getRowOrNull(result);
 };
 
@@ -97,7 +104,16 @@ export const updateBook = async (
   validator.availableCopiesValidator(available_copies);
   validator.statusValidator(status);
 
-  const result = await librarianRepo.updateBook(book_id, book_info);
+  const result = await librarianRepo.updateBook(
+    book_id,
+    category_id,
+    isbn,
+    title,
+    author,
+    total_copies,
+    available_copies,
+    status
+  );
   return getRowOrNull(result);
 };
 

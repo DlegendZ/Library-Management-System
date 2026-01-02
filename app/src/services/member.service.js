@@ -25,7 +25,7 @@ export const loginMember = async (email, password, req) => {
   const accessToken = authToken.signAccessToken(user);
   const refreshToken = authToken.generateRefreshToken();
 
-  const { id: refreshId, expires_at } = authToken.saveRefreshToken({
+  const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
     user,
     refreshToken,
     req,
@@ -35,7 +35,7 @@ export const loginMember = async (email, password, req) => {
 };
 
 export const viewBooks = async () => {
-  const result = await memberRepo.getBooks;
+  const result = await memberRepo.getBooks();
   return getRowOrNull(result);
 };
 
@@ -63,7 +63,7 @@ export const viewBooksByAuthor = async (author) => {
 export const viewMyBorrowHistory = async (user_id) => {
   validator.idValidator(user_id);
 
-  const result = await memberRepo.viewMyBorrowHistory(user_id);
+  const result = await memberRepo.getMyBorrowHistory(user_id);
   return getRowOrNull(result);
 };
 

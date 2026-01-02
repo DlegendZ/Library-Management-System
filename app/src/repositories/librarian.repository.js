@@ -8,6 +8,12 @@ export const insertMember = async (full_name, email, password_hash) => {
   );
 };
 
+export const getUserByEmail = async (email) => {
+  return await query(`SELECT * FROM users WHERE email = $1`, [
+    email.toLowerCase(),
+  ]);
+};
+
 export const getAllMembers = async () => {
   return await query(`SELECT * FROM users WHERE role_id = 3`);
 };

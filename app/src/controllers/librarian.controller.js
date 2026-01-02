@@ -20,14 +20,14 @@ export const registerMemberController = async (req, res) => {
   }
 };
 
-export const loginLibrarianController = (req, res) => {
+export const loginLibrarianController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const { accessToken, refreshToken, refreshId, expires_at } =
-      librarianService.loginLibrarian(email, password, req);
+      await librarianService.loginLibrarian(email, password, req);
 
-    res.cookie("refresh_token", refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -72,10 +72,11 @@ export const logoutLibrarianController = async (req, res) => {
     if (refreshToken) {
       const row = await authToken.findRefreshToken(refreshToken);
       if (row) await authToken.revokeRefreshToken(row.id);
-      res.cookie("refresh_token", {
+      res.cookie("refreshToken", "", {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
+        maxAge: 0,
       });
 
       res.status(200).json({ message: "Logged out" });

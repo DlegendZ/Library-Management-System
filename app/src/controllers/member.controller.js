@@ -2,14 +2,14 @@ import * as memberService from "../services/member.service.js";
 import * as authToken from "../authentication/token.js";
 import { query } from "../../database.js";
 
-export const loginMemberController = (req, res) => {
+export const loginMemberController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const { accessToken, refreshToken, refreshId, expires_at } =
-      memberService.loginMember(email, password, req);
+      await memberService.loginMember(email, password, req);
 
-    res.cookie("refresh_token", refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -47,17 +47,18 @@ export const refATController = async (req, res) => {
   }
 };
 
-export const logoutAdminController = async (req, res) => {
+export const logoutMemberController = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
 
   try {
     if (refreshToken) {
       const row = await authToken.findRefreshToken(refreshToken);
       if (row) await authToken.revokeRefreshToken(row.id);
-      res.cookie("refresh_token", {
+      res.cookie("refreshToken", "", {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
+        maxAge: 0,
       });
 
       res.status(200).json({ message: "Logged out" });

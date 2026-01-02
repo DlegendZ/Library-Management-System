@@ -16,14 +16,14 @@ export const registerAdminController = async (req, res) => {
   }
 };
 
-export const loginAdminController = (req, res) => {
+export const loginAdminController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const { accessToken, refreshToken, refreshId, expires_at } =
-      adminService.loginAdmin(email, password, req);
+      await adminService.loginAdmin(email, password, req);
 
-    res.cookie("refresh_token", refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
@@ -68,10 +68,11 @@ export const logoutAdminController = async (req, res) => {
     if (refreshToken) {
       const row = await authToken.findRefreshToken(refreshToken);
       if (row) await authToken.revokeRefreshToken(row.id);
-      res.cookie("refresh_token", {
+      res.cookie("refreshToken", "", {
         httpOnly: true,
         secure: false,
         sameSite: "lax",
+        maxAge: 0,
       });
 
       res.status(200).json({ message: "Logged out" });
@@ -140,9 +141,9 @@ export const viewAllUsersController = async (req, res) => {
   }
 };
 
-export const viewRollAssignmentsController = async (req, res) => {
+export const viewRolesAssignmentsController = async (req, res) => {
   try {
-    const result = await adminService.viewRollAssignments();
+    const result = await adminService.viewRolesAssignments();
     return res.status(200).json({ message: "Roles displayed" });
   } catch (err) {
     console.error("error :", err);

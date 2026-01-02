@@ -142,7 +142,7 @@ export const updateBook = async (
             total_copies = $5,
             available_copies = $6,
             status = $7
-        WHERE book_id = $8`,
+        WHERE book_id = $8 RETURNING *`,
     [
       category_id,
       isbn,
@@ -157,19 +157,21 @@ export const updateBook = async (
 };
 
 export const deleteBook = async (book_id) => {
-  return await query(`DELETE FROM books WHERE book_id = $1`, [book_id]);
+  return await query(`DELETE FROM books WHERE book_id = $1 RETURNING *`, [
+    book_id,
+  ]);
 };
 
 export const insertCategory = async (name, description) => {
   return await query(
-    `INSERT INTO category (name, description) VALUES ($1, $2)`,
+    `INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *`,
     [name, description]
   );
 };
 
 export const updateCategory = async (category_id, name, description) => {
   return await query(
-    `UPDATE category SET name = $1, description = $2 WHERE category_id = $3`,
+    `UPDATE categories SET name = $1, description = $2 WHERE category_id = $3 RETURNING *`,
     [name, description, category_id]
   );
 };

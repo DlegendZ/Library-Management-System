@@ -41,7 +41,7 @@ export const loginAdmin = async (email, password, req) => {
   const accessToken = authToken.signAccessToken(user);
   const refreshToken = authToken.generateRefreshToken();
 
-  const { id: refreshId, expires_at } = authToken.saveRefreshToken({
+  const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
     user,
     refreshToken,
     req,
@@ -87,7 +87,7 @@ export const viewAllUsers = async () => {
   return getRowOrNull(result);
 };
 
-export const viewRollAssignments = async () => {
+export const viewRolesAssignments = async () => {
   const result = await adminRepo.getRolesAssignments();
   return getRowOrNull(result);
 };
@@ -108,12 +108,12 @@ export const viewBorrowRecords = async () => {
 };
 
 export const viewFineRecords = async () => {
-  const result = await adminRepo.viewFineRecords();
+  const result = await adminRepo.getFineRecords();
   return getRowOrNull(result);
 };
 
 export const viewMemberBorrowHistory = async (user_id) => {
-  const result = await adminRepo.viewMemberBorrowHistory(user_id);
+  const result = await adminRepo.getMemberBorrowHistory(user_id);
   return getRowOrNull(result);
 };
 
@@ -131,7 +131,7 @@ export const viewUsersWithFines = async (status) => {
 
 export const viewUserByStatus = async (status) => {
   validator.statusValidator(status);
-  const result = await adminRepo.getBooksWithBorrowers(status);
+  const result = await adminRepo.getUserByStatus(status);
   return getRowOrNull(result);
 };
 
@@ -150,7 +150,7 @@ export const addBook = async (
   validator.totalCopiesValidator(total_copies);
   validator.availableCopiesValidator(available_copies);
 
-  const result = await adminRepo.insertBook(book_info);
+  const result = await adminRepo.insertBook(category_id, isbn, title, author, total_copies, available_copies);
   return getRowOrNull(result);
 };
 
@@ -173,7 +173,7 @@ export const updateBook = async (
   validator.availableCopiesValidator(available_copies);
   validator.statusValidator(status);
 
-  const result = await adminRepo.updateBook(book_id, book_info);
+  const result = await adminRepo.updateBook(book_id, category_id, isbn, title, author, total_copies, available_copies, status);
   return getRowOrNull(result);
 };
 

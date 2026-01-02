@@ -11,7 +11,7 @@ router.post("/librarian", adminController.registerLibrarianController);
 router.put("/roles", adminController.assignRolesController);
 router.put("/status", adminController.assignStatusController);
 router.get("/users", adminController.viewAllUsersController);
-router.get("/rolls-assignments", adminController.viewRollAssignmentsController);
+router.get("/roles-assignments", adminController.viewRolesAssignmentsController);
 router.get("/books", adminController.viewAllBooksController);
 router.get("/categories", adminController.viewAllCategoriesController);
 router.get("/borrow-records", adminController.viewBorrowRecordsController);
