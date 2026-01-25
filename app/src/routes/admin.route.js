@@ -28,7 +28,7 @@ router.get("/users-fine", adminController.viewUsersWithFinesController);
 router.get("/users-status", adminController.viewUserByStatusController);
 router.post("/books", adminController.addBookController);
 router.put("/books", adminController.updateBookController);
-router.delete("/books", adminController.deleteBookController);
+router.delete("/books/:book_id", adminController.deleteBookController);
 router.post("/categories", adminController.addCategoryController);
 router.put("/categories", adminController.updateCategoryController);
 

@@ -203,7 +203,7 @@ export const viewFineRecordsController = async (req, res) => {
 };
 
 export const viewMemberBorrowHistoryController = async (req, res) => {
-  const { user_id } = req.body;
+  const { user_id } = req.query;
 
   try {
     const result = await adminService.viewMemberBorrowHistory(user_id);
@@ -217,7 +217,7 @@ export const viewMemberBorrowHistoryController = async (req, res) => {
 };
 
 export const viewBooksWithBorrowersController = async (req, res) => {
-  const { status } = req.body;
+  const { status } = req.query;
 
   try {
     const result = await adminService.viewBooksWithBorrowers(status);
@@ -231,7 +231,7 @@ export const viewBooksWithBorrowersController = async (req, res) => {
 };
 
 export const viewUsersWithFinesController = async (req, res) => {
-  const { status } = req.body;
+  const { status } = req.query;
 
   try {
     const result = await adminService.viewUsersWithFines(status);
@@ -245,7 +245,7 @@ export const viewUsersWithFinesController = async (req, res) => {
 };
 
 export const viewUserByStatusController = async (req, res) => {
-  const { status } = req.body;
+  const { status } = req.query;
 
   try {
     const result = await adminService.viewUserByStatus(status);
@@ -313,7 +313,7 @@ export const updateBookController = async (req, res) => {
 };
 
 export const deleteBookController = async (req, res) => {
-  const { book_id } = req.body;
+  const { book_id } = req.params;
 
   try {
     const result = await adminService.deleteBook(book_id);
