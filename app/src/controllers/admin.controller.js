@@ -1,6 +1,7 @@
 import * as adminService from "../services/admin.service.js";
 import * as authToken from "../authentication/token.js";
 import { query } from "../../database.js";
+import { getBooks } from "../repositories/admin.repository.js";
 
 export const registerAdminController = async (req, res) => {
   const { full_name, email, password } = req.body;
@@ -92,7 +93,7 @@ export const registerLibrarianController = async (req, res) => {
     const result = await adminService.registerLibrarian(
       full_name,
       email,
-      password
+      password,
     );
     return res.status(201).json({ message: "Librarian account created." });
   } catch (err) {
@@ -132,7 +133,7 @@ export const assignStatusController = async (req, res) => {
 export const viewAllUsersController = async (req, res) => {
   try {
     const result = await adminService.viewAllUsers();
-    return res.status(200).json({ message: "Displayed all users" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -144,7 +145,7 @@ export const viewAllUsersController = async (req, res) => {
 export const viewRolesAssignmentsController = async (req, res) => {
   try {
     const result = await adminService.viewRolesAssignments();
-    return res.status(200).json({ message: "Roles displayed" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -156,7 +157,7 @@ export const viewRolesAssignmentsController = async (req, res) => {
 export const viewAllBooksController = async (req, res) => {
   try {
     const result = await adminService.viewAllBooks();
-    return res.status(200).json({ message: "Displayed all books" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -168,7 +169,7 @@ export const viewAllBooksController = async (req, res) => {
 export const viewAllCategoriesController = async (req, res) => {
   try {
     const result = await adminService.viewAllCategories();
-    return res.status(200).json({ message: "Displayed all categories" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -180,7 +181,7 @@ export const viewAllCategoriesController = async (req, res) => {
 export const viewBorrowRecordsController = async (req, res) => {
   try {
     const result = await adminService.viewBorrowRecords();
-    return res.status(200).json({ message: "Displayed all borrow records" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -192,7 +193,7 @@ export const viewBorrowRecordsController = async (req, res) => {
 export const viewFineRecordsController = async (req, res) => {
   try {
     const result = await adminService.viewFineRecords();
-    return res.status(200).json({ message: "Displayed all fine records" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -206,9 +207,7 @@ export const viewMemberBorrowHistoryController = async (req, res) => {
 
   try {
     const result = await adminService.viewMemberBorrowHistory(user_id);
-    return res.status(200).json({
-      message: `Displayed all borrow records from user with id : ${user_id}`,
-    });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -222,9 +221,7 @@ export const viewBooksWithBorrowersController = async (req, res) => {
 
   try {
     const result = await adminService.viewBooksWithBorrowers(status);
-    return res
-      .status(200)
-      .json({ message: "Displayed all books with borrowers" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -238,7 +235,7 @@ export const viewUsersWithFinesController = async (req, res) => {
 
   try {
     const result = await adminService.viewUsersWithFines(status);
-    return res.status(200).json({ message: "Displayed all users with fine" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -252,7 +249,7 @@ export const viewUserByStatusController = async (req, res) => {
 
   try {
     const result = await adminService.viewUserByStatus(status);
-    return res.status(200).json({ message: "Display all users by status" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -272,7 +269,7 @@ export const addBookController = async (req, res) => {
       title,
       author,
       total_copies,
-      available_copies
+      available_copies,
     );
     return res.status(200).json({ message: "Added a book" });
   } catch (err) {
@@ -304,7 +301,7 @@ export const updateBookController = async (req, res) => {
       author,
       total_copies,
       available_copies,
-      status
+      status,
     );
     return res.status(200).json({ message: "updated book's info" });
   } catch (err) {
@@ -350,7 +347,7 @@ export const updateCategoryController = async (req, res) => {
     const result = await adminService.updateCategory(
       category_id,
       name,
-      description
+      description,
     );
     return res.status(200).json({ message: "Updated a category" });
   } catch (err) {

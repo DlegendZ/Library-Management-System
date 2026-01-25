@@ -3,13 +3,13 @@ import * as validator from "./validators/validator.js";
 import argon2 from "argon2";
 import * as authToken from "../authentication/token.js";
 
-function getRowOrNull(result) {
-  if (result.rows.length === 0) {
-    return null;
-  }
+// function getRowOrNull(result) {
+//   if (result.rows.length === 0) {
+//     return null;
+//   }
 
-  return result.rows;
-}
+//   return result.rows;
+// }
 
 export const registerAdmin = async (full_name, email, password) => {
   validator.humanNameValidator(full_name);
@@ -24,7 +24,7 @@ export const registerAdmin = async (full_name, email, password) => {
   });
 
   const result = await adminRepo.registerAdmin(full_name, email, password_hash);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const loginAdmin = async (email, password, req) => {
@@ -67,72 +67,72 @@ export const registerLibrarian = async (full_name, email, password) => {
     email,
     password_hash
   );
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const assignRoles = async (user_id, role_id) => {
   validator.idValidator(role_id);
   const result = await adminRepo.updateRoles(user_id, role_id);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const assignStatus = async (user_id, status) => {
   validator.statusValidator(status);
   const result = await adminRepo.updateStatus(user_id, status);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewAllUsers = async () => {
   const result = await adminRepo.getAllUsers();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewRolesAssignments = async () => {
   const result = await adminRepo.getRolesAssignments();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewAllBooks = async () => {
   const result = await adminRepo.getBooks();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewAllCategories = async () => {
   const result = await adminRepo.getCategories();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewBorrowRecords = async () => {
   const result = await adminRepo.getBorrowRecords();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewFineRecords = async () => {
   const result = await adminRepo.getFineRecords();
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewMemberBorrowHistory = async (user_id) => {
   const result = await adminRepo.getMemberBorrowHistory(user_id);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewBooksWithBorrowers = async (status) => {
   validator.statusValidator(status);
   const result = await adminRepo.getBooksWithBorrowers(status);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewUsersWithFines = async (status) => {
   validator.statusValidator(status);
   const result = await adminRepo.getUsersWithFines(status);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const viewUserByStatus = async (status) => {
   validator.statusValidator(status);
   const result = await adminRepo.getUserByStatus(status);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const addBook = async (
@@ -151,7 +151,7 @@ export const addBook = async (
   validator.availableCopiesValidator(available_copies);
 
   const result = await adminRepo.insertBook(category_id, isbn, title, author, total_copies, available_copies);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const updateBook = async (
@@ -174,14 +174,14 @@ export const updateBook = async (
   validator.statusValidator(status);
 
   const result = await adminRepo.updateBook(book_id, category_id, isbn, title, author, total_copies, available_copies, status);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const deleteBook = async (book_id) => {
   validator.idValidator(book_id);
 
   const result = await adminRepo.deleteBook(book_id);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const addCategory = async (name, description) => {
@@ -189,7 +189,7 @@ export const addCategory = async (name, description) => {
   validator.roleCatDescValidator(description);
 
   const result = await adminRepo.insertCategory(name, description);
-  return getRowOrNull(result);
+  return result.rows;
 };
 
 export const updateCategory = async (category_id, name, description) => {
@@ -198,5 +198,5 @@ export const updateCategory = async (category_id, name, description) => {
   validator.roleCatDescValidator(description);
 
   const result = await adminRepo.updateCategory(category_id, name, description);
-  return getRowOrNull(result);
+  return result.rows;
 };

@@ -3,11 +3,11 @@ import * as adminController from "../controllers/admin.controller.js";
 
 const router = Router();
 
-router.post("/register", adminController.registerAdminController);
+router.post("/admins", adminController.registerAdminController);
 router.post("/login", adminController.loginAdminController);
 router.post("/refresh", adminController.refATController);
 router.post("/logout", adminController.logoutAdminController);
-router.post("/librarian", adminController.registerLibrarianController);
+router.post("/librarians", adminController.registerLibrarianController);
 router.put("/roles", adminController.assignRolesController);
 router.put("/status", adminController.assignStatusController);
 router.get("/users", adminController.viewAllUsersController);
