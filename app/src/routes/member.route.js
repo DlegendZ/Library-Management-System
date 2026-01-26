@@ -3,9 +3,10 @@ import * as memberController from "../controllers/member.controller.js";
 
 const router = Router();
 
-router.post("/login", memberController.loginMemberController);
-router.post("/refresh", memberController.refATController);
-router.post("/logout", memberController.logoutMemberController);
+// router.post("/login", memberController.loginMemberController);
+// router.post("/refresh", memberController.refATController);
+// router.post("/logout", memberController.logoutMemberController);
+
 router.get("/books", memberController.viewBooksController);
 router.get("/books-category", memberController.viewBooksByCategoryController);
 router.get("/books-title", memberController.viewBooksByTitleController);

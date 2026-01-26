@@ -1,6 +1,6 @@
 import * as librarianService from "../services/librarian.service.js";
-import * as authToken from "../authentication/token.js";
-import { query } from "../../database.js";
+// import * as authToken from "../authentication/token.js";
+// import { query } from "../../database.js";
 
 export const registerMemberController = async (req, res) => {
   const { full_name, email, password } = req.body;
@@ -20,74 +20,74 @@ export const registerMemberController = async (req, res) => {
   }
 };
 
-export const loginLibrarianController = async (req, res) => {
-  const { email, password } = req.body;
+// export const loginLibrarianController = async (req, res) => {
+//   const { email, password } = req.body;
 
-  try {
-    const { accessToken, refreshToken, refreshId, expires_at } =
-      await librarianService.loginLibrarian(email, password, req);
+//   try {
+//     const { accessToken, refreshToken, refreshId, expires_at } =
+//       await librarianService.loginLibrarian(email, password, req);
 
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      expires: expires_at,
-    });
+//     res.cookie("refreshToken", refreshToken, {
+//       httpOnly: true,
+//       secure: false,
+//       sameSite: "lax",
+//       expires: expires_at,
+//     });
 
-    return res.status(200).json({ accessToken, refreshId });
-  } catch (err) {
-    console.error("error :", err);
-    if (err.status || err.message === "User not found") {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-    return res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+//     return res.status(200).json({ accessToken, refreshId });
+//   } catch (err) {
+//     console.error("error :", err);
+//     if (err.status || err.message === "User not found") {
+//       return res.status(401).json({ message: "Invalid email or password" });
+//     }
+//     return res.status(500).json({ message: "Internal Server Error" });
+//   }
+// };
 
-export const refATController = async (req, res) => {
-  //refresh access token
-  const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken)
-    return res.status(401).json({ error: "Refresh token not found" });
-  const row = await authToken.findRefreshToken(refreshToken);
-  if (!row) return res.status(401).json({ error: "Invalid refresh token" });
+// export const refATController = async (req, res) => {
+//   //refresh access token
+//   const refreshToken = req.cookies?.refreshToken;
+//   if (!refreshToken)
+//     return res.status(401).json({ error: "Refresh token not found" });
+//   const row = await authToken.findRefreshToken(refreshToken);
+//   if (!row) return res.status(401).json({ error: "Invalid refresh token" });
 
-  try {
-    const userRes = await query(`SELECT * FROM users WHERE user_id = $1`, [
-      row.user_id,
-    ]);
-    const user = userRes.rows[0];
-    const accessToken = authToken.signAccessToken(user);
-    return res.status(200).json({ accessToken });
-  } catch (err) {
-    console.log("error :", err);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-};
+//   try {
+//     const userRes = await query(`SELECT * FROM users WHERE user_id = $1`, [
+//       row.user_id,
+//     ]);
+//     const user = userRes.rows[0];
+//     const accessToken = authToken.signAccessToken(user);
+//     return res.status(200).json({ accessToken });
+//   } catch (err) {
+//     console.log("error :", err);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
-export const logoutLibrarianController = async (req, res) => {
-  const refreshToken = req.cookies?.refreshToken;
+// export const logoutLibrarianController = async (req, res) => {
+//   const refreshToken = req.cookies?.refreshToken;
 
-  try {
-    if (refreshToken) {
-      const row = await authToken.findRefreshToken(refreshToken);
-      if (row) await authToken.revokeRefreshToken(row.id);
-      res.cookie("refreshToken", "", {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 0,
-      });
+//   try {
+//     if (refreshToken) {
+//       const row = await authToken.findRefreshToken(refreshToken);
+//       if (row) await authToken.revokeRefreshToken(row.id);
+//       res.cookie("refreshToken", "", {
+//         httpOnly: true,
+//         secure: false,
+//         sameSite: "lax",
+//         maxAge: 0,
+//       });
 
-      res.status(200).json({ message: "Logged out" });
-    } else {
-      res.status(200).json({ message: "Required refresh token" });
-    }
-  } catch (err) {
-    console.error("Error : ", err);
-    return res.status(500).json({ message: "Internal server error" });
-  }
-};
+//       res.status(200).json({ message: "Logged out" });
+//     } else {
+//       res.status(200).json({ message: "Required refresh token" });
+//     }
+//   } catch (err) {
+//     console.error("Error : ", err);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// };
 
 export const viewAllMemberController = async (req, res) => {
   try {

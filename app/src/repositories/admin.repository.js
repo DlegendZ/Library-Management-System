@@ -34,11 +34,11 @@ export const getAllUsers = async () => {
   return await query(`SELECT * FROM users`);
 };
 
-export const getUserByEmail = async (email) => {
-  return await query(`SELECT * FROM users WHERE email = $1`, [
-    email.toLowerCase(),
-  ]);
-};
+// export const getUserByEmail = async (email) => {
+//   return await query(`SELECT * FROM users WHERE email = $1`, [
+//     email.toLowerCase(),
+//   ]);
+// };
 
 export const getRolesAssignments = async () => {
   return await query(`SELECT * FROM roles`);

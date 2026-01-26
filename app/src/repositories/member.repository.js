@@ -7,6 +7,12 @@ export const getBooks = async () => {
   );
 };
 
+// export const getUserByEmail = async (email) => {
+//   return await query(`SELECT * FROM users WHERE email = $1`, [
+//     email.toLowerCase(),
+//   ]);
+// };
+
 export const getBooksByCategory = async (categoryId) => {
   return await query(`SELECT * FROM books WHERE category_id = $1`, [
     categoryId,
