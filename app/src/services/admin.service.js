@@ -148,7 +148,7 @@ export const addBook = async (
   validator.titleValidator(title);
   validator.humanNameValidator(author);
   validator.totalCopiesValidator(total_copies);
-  validator.availableCopiesValidator(available_copies);
+  validator.availableCopiesValidator(total_copies, available_copies);
 
   const result = await adminRepo.insertBook(category_id, isbn, title, author, total_copies, available_copies);
   return result.rows;
@@ -170,7 +170,7 @@ export const updateBook = async (
   validator.titleValidator(title);
   validator.humanNameValidator(author);
   validator.totalCopiesValidator(total_copies);
-  validator.availableCopiesValidator(available_copies);
+  validator.availableCopiesValidator(total_copies, available_copies);
   validator.statusValidator(status);
 
   const result = await adminRepo.updateBook(book_id, category_id, isbn, title, author, total_copies, available_copies, status);

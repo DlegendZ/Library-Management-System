@@ -159,7 +159,7 @@ export const borrowBookController = async (req, res) => {
   const { user_id, book_id, due_at } = req.body;
 
   try {
-    const result = await librarianService.borrowBook(user_id, book_id, due_at);
+    const result = await librarianService.borrowBook(user_id, book_id, new Date(due_at));
     return res.status(200).json({ message: "Borrowed a book" });
   } catch (err) {
     console.error("error :", err);
