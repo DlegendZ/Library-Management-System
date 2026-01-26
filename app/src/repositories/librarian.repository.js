@@ -78,7 +78,7 @@ export const borrowBook = async (user_id, book_id, due_at) => {
 
 export const returnBook = async (borrow_id) => {
   return await query(
-    `UPDATE borrow_records SET returned_at = NOW() WHERE borrow_id = $1`,
+    `UPDATE borrow_records SET returned_at = NOW() + INTERVAL '100 days', status = '' WHERE borrow_id = $1`,
     [borrow_id]
   );
 };

@@ -41,6 +41,9 @@ router.put(
 export default router;
 
 // yang kurang :
-// 1. api dirapikan
 // 2. validator dibenerin
 // 3. authentikasi dibenerin
+// 4. cek fungsi udh bener?
+// 5. cek api udh bener?
+// 6. cek respon udh bener? sama error responnya
+// 7. cek business logic udh bener?

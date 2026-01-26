@@ -10,7 +10,7 @@ export const idValidator = (id) => {
     throw new badReqError("ID is required.");
   }
 
-  if (!(Number.isInteger(id) && id > 0)) {
+  if (!(id > 0)) {
     throw new badReqError("ID must be a positive integer.");
   }
 };
@@ -24,7 +24,7 @@ export const humanNameValidator = (name) => {
     throw new badReqError("name must contain at least two words.");
   }
 
-  if (!/^[A-Za-z. ]+$/.test(name)) {
+  if (!/^[A-Za-z., ]+$/.test(name)) {
     throw new badReqError("name contains invalid characters.");
   }
 
@@ -66,7 +66,7 @@ export const passwordValidator = (password) => {
     )
   ) {
     throw new badReqError(
-      "Password must contain uppercase, lowercase, number, and special character."
+      "Password must contain uppercase, lowercase, number, and special character.",
     );
   }
 };
@@ -105,7 +105,7 @@ export const deadlineTimeStampValidator = (due_at) => {
     !(
       due_at instanceof Date &&
       /^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?(?:Z|[+-]\d{2}(?::?\d{2})?)?$/.test(
-        due_at.toISOString()
+        due_at.toISOString(),
       )
     )
   ) {

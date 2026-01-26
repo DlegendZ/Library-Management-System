@@ -9,9 +9,9 @@ router.post("/logout", librarianController.logoutLibrarianController);
 router.post("/members", librarianController.registerMemberController);
 router.get("/members", librarianController.viewAllMemberController);
 router.post("/books", librarianController.addBookController);
-router.put("/books", librarianController.updateBookController);
+router.put("/books/:book_id", librarianController.updateBookController);
 router.post("/borrow-records", librarianController.borrowBookController);
-router.put("/borrow-records", librarianController.returnBookController);
+router.put("/borrow-records/:borrow_id", librarianController.returnBookController);
 router.get("/borrow-records", librarianController.viewBorrowRecordsController);
 router.get("/fine-records", librarianController.viewFineRecordsController);
 

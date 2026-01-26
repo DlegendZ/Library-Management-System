@@ -92,7 +92,7 @@ export const logoutLibrarianController = async (req, res) => {
 export const viewAllMemberController = async (req, res) => {
   try {
     const result = await librarianService.viewAllMembers();
-    return res.status(200).json({ message: "Displayed all members" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -114,7 +114,7 @@ export const addBookController = async (req, res) => {
       total_copies,
       available_copies
     );
-    return res.status(200).json({ message: "Displayed all books" });
+    return res.status(200).json({ message: "Added a book" });
   } catch (err) {
     console.error("error :", err);
     return res
@@ -124,8 +124,9 @@ export const addBookController = async (req, res) => {
 };
 
 export const updateBookController = async (req, res) => {
+  const { book_id } = req.params;
+
   const {
-    book_id,
     status,
     category_id,
     isbn,
@@ -170,7 +171,7 @@ export const borrowBookController = async (req, res) => {
 };
 
 export const returnBookController = async (req, res) => {
-  const { borrow_id } = req.body;
+  const borrow_id = Number(req.params.borrow_id);
 
   try {
     const result = await librarianService.returnBook(borrow_id);
@@ -186,7 +187,7 @@ export const returnBookController = async (req, res) => {
 export const viewBorrowRecordsController = async (req, res) => {
   try {
     const result = await librarianService.viewBorrowRecords();
-    return res.status(200).json({ message: "Displayed all borrow records" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -198,7 +199,7 @@ export const viewBorrowRecordsController = async (req, res) => {
 export const viewFineRecordsController = async (req, res) => {
   try {
     const result = await librarianService.viewFineRecords();
-    return res.status(200).json({ message: "Displayed all fine records" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res

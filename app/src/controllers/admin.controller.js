@@ -281,7 +281,7 @@ export const addBookController = async (req, res) => {
 };
 
 export const updateBookController = async (req, res) => {
-  const book_id = Number(req.params.book_id);
+  const { book_id } = req.params;
 
   const {
     category_id,
@@ -314,7 +314,7 @@ export const updateBookController = async (req, res) => {
 };
 
 export const deleteBookController = async (req, res) => {
-  const book_id = Number(req.params.book_id);
+  const { book_id } = req.params;
 
   try {
     const result = await adminService.deleteBook(book_id);
@@ -342,7 +342,7 @@ export const addCategoryController = async (req, res) => {
 };
 
 export const updateCategoryController = async (req, res) => {
-  const category_id = Number(req.params.category_id)
+  const { category_id } = req.params;
 
   const { name, description } = req.body;
 

@@ -72,7 +72,7 @@ export const addBook = async (
   validator.titleValidator(title);
   validator.humanNameValidator(author);
   validator.totalCopiesValidator(total_copies);
-  validator.availableCopiesValidator(available_copies);
+  validator.availableCopiesValidator(total_copies, available_copies);
 
   const result = await librarianRepo.insertBook(
     category_id,
@@ -101,7 +101,7 @@ export const updateBook = async (
   validator.titleValidator(title);
   validator.humanNameValidator(author);
   validator.totalCopiesValidator(total_copies);
-  validator.availableCopiesValidator(available_copies);
+  validator.availableCopiesValidator(total_copies, available_copies);
   validator.statusValidator(status);
 
   const result = await librarianRepo.updateBook(
@@ -139,6 +139,6 @@ export const viewBorrowRecords = async () => {
 };
 
 export const viewFineRecords = async () => {
-  const result = await librarianRepo.viewFineRecords();
+  const result = await librarianRepo.getFineRecords();
   return getRowOrNull(result);
 };
