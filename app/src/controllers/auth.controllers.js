@@ -1,5 +1,5 @@
 import * as authService from "../services/auth.service.js";
-import * as authToken from "../authentication/token.js";
+// import * as authToken from "../authentication/token.js";
 import { query } from "../../database.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -41,7 +41,7 @@ export const refATController = async (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
   if (!refreshToken)
     return res.status(401).json({ error: "Refresh token not found" });
-  const row = await authToken.findRefreshToken(refreshToken);
+  const row = await authService.findRefreshToken(refreshToken);
   if (!row) return res.status(401).json({ error: "Invalid refresh token" });
 
   try {
@@ -49,7 +49,7 @@ export const refATController = async (req, res) => {
       row.user_id,
     ]);
     const user = userRes.rows[0];
-    const accessToken = authToken.signAccessToken(user);
+    const accessToken = authService.signAccessToken(user);
     return res.status(200).json({ accessToken });
   } catch (err) {
     console.log("error :", err);
@@ -62,8 +62,8 @@ export const logoutController = async (req, res) => {
 
   try {
     if (refreshToken) {
-      const row = await authToken.findRefreshToken(refreshToken);
-      if (row) await authToken.revokeRefreshToken(row.id);
+      const row = await authService.findRefreshToken(refreshToken);
+      if (row) await authService.revokeRefreshToken(row.id);
       res.cookie("refreshToken", "", {
         httpOnly: true,
         secure: false,

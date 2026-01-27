@@ -32,7 +32,7 @@ export default router;
 
 // yang kurang :
 // 2. validator dibenerin? done
-// 3. authentikasi dibenerin
+// 3. authentikasi dibenerin? done
 // 4. cek fungsi udh bener? done
 // 5. cek api udh bener? done
 // 6. cek respon udh bener? sama error responnya

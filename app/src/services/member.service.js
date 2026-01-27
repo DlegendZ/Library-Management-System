@@ -1,7 +1,7 @@
 import * as memberRepo from "../repositories/member.repository.js";
 import * as validator from "./validators/validator.js";
-import argon2 from "argon2";
-import * as authToken from "../authentication/token.js";
+// import argon2 from "argon2";
+// import * as authToken from "../authentication/token.js";
 
 function getRowOrNull(result) {
   if (result.rows.length === 0) {
@@ -11,28 +11,28 @@ function getRowOrNull(result) {
   return result.rows;
 }
 
-export const loginMember = async (email, password, req) => {
-  validator.emailValidator(email);
-  validator.passwordValidator(password);
+// export const loginMember = async (email, password, req) => {
+//   validator.emailValidator(email);
+//   validator.passwordValidator(password);
 
-  const userRes = await memberRepo.getUserByEmail(email);
-  const user = userRes.rows[0];
+//   const userRes = await memberRepo.getUserByEmail(email);
+//   const user = userRes.rows[0];
 
-  if (!user) throw new Error("User not found");
-  const password_verified = await argon2.verify(user.password_hash, password);
-  if (!password_verified) throw new Error("Password not found");
+//   if (!user) throw new Error("User not found");
+//   const password_verified = await argon2.verify(user.password_hash, password);
+//   if (!password_verified) throw new Error("Password not found");
 
-  const accessToken = authToken.signAccessToken(user);
-  const refreshToken = authToken.generateRefreshToken();
+//   const accessToken = authToken.signAccessToken(user);
+//   const refreshToken = authToken.generateRefreshToken();
 
-  const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
-    user,
-    refreshToken,
-    req,
-  });
+//   const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
+//     user,
+//     refreshToken,
+//     req,
+//   });
 
-  return { accessToken, refreshToken, refreshId, expires_at };
-};
+//   return { accessToken, refreshToken, refreshId, expires_at };
+// };
 
 export const viewBooks = async () => {
   const result = await memberRepo.getBooks();
