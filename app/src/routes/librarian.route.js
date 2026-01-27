@@ -18,5 +18,4 @@ router.get("/fine-records", librarianController.viewFineRecordsController);
 router.put("/books/:book_id", librarianController.updateBookController);
 router.put("/borrow-records/:borrow_id", librarianController.returnBookController);
 
-
 export default router;

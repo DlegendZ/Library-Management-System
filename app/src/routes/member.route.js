@@ -8,10 +8,10 @@ const router = Router();
 // router.post("/logout", memberController.logoutMemberController);
 
 router.get("/books", memberController.viewBooksController);
-router.get("/books-category", memberController.viewBooksByCategoryController);
-router.get("/books-title", memberController.viewBooksByTitleController);
-router.get("/books-author", memberController.viewBooksByAuthorController);
-router.get("/borrow-history", memberController.viewMyBorrowHistoryController);
-router.get("/fine-status", memberController.viewMyFineStatusController);
+router.get("/books/categories", memberController.viewBooksByCategoryController);
+router.get("/books/titles", memberController.viewBooksByTitleController);
+router.get("/books/authors", memberController.viewBooksByAuthorController);
+router.get("/members/:user_id/borrow-records", memberController.viewMyBorrowHistoryController);
+router.get("/members/:user_id/fine-records/status", memberController.viewMyFineStatusController);
 
 export default router;

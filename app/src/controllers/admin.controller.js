@@ -104,7 +104,8 @@ export const registerLibrarianController = async (req, res) => {
 };
 
 export const assignRolesController = async (req, res) => {
-  const { user_id, role_id } = req.body;
+  const { user_id } = req.params;
+  const { role_id } = req.body;
   try {
     const result = await adminService.assignRoles(user_id, role_id);
     return res.status(200).json({ message: "Updated user's role" });
@@ -117,7 +118,8 @@ export const assignRolesController = async (req, res) => {
 };
 
 export const assignStatusController = async (req, res) => {
-  const { user_id, status } = req.body;
+  const { user_id } = req.params;
+  const { status } = req.body;
   try {
     const result = await adminService.assignStatus(user_id, status);
     return res.status(200).json({ message: "Updated user's status" });
@@ -202,7 +204,7 @@ export const viewFineRecordsController = async (req, res) => {
 };
 
 export const viewMemberBorrowHistoryController = async (req, res) => {
-  const { user_id } = req.query;
+  const { user_id } = req.params;
 
   try {
     const result = await adminService.viewMemberBorrowHistory(user_id);

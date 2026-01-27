@@ -67,9 +67,10 @@ export const viewMyBorrowHistory = async (user_id) => {
   return getRowOrNull(result);
 };
 
-export const viewMyFineStatus = async (user_id) => {
+export const viewMyFineStatus = async (user_id, status) => {
   validator.idValidator(user_id);
+  validator.statusValidator(status);
 
-  const result = await memberRepo.getMyFineStatus(user_id);
+  const result = await memberRepo.getMyFineStatus(user_id, status);
   return getRowOrNull(result);
 };

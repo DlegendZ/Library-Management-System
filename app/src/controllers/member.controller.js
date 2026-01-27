@@ -126,7 +126,7 @@ export const viewBooksByAuthorController = async (req, res) => {
 };
 
 export const viewMyBorrowHistoryController = async (req, res) => {
-  const { user_id } = req.query;
+  const { user_id } = req.params;
 
   try {
     const result = await memberService.viewMyBorrowHistory(user_id);
@@ -140,10 +140,11 @@ export const viewMyBorrowHistoryController = async (req, res) => {
 };
 
 export const viewMyFineStatusController = async (req, res) => {
-  const { user_id } = req.query;
+  const { user_id } = req.params;
+  const { status } = req.query;
 
   try {
-    const result = await memberService.viewMyFineStatus(user_id);
+    const result = await memberService.viewMyFineStatus(user_id, status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);

@@ -38,11 +38,11 @@ export const getMyBorrowHistory = async (user_id) => {
   );
 };
 
-export const getMyFineStatus = async (user_id) => {
+export const getMyFineStatus = async (user_id, status) => {
   return await query(
     `SELECT * FROM users u LEFT JOIN  borrow_records br 
         ON u.user_id = br.user_id LEFT JOIN fine_records fr
-        ON br.borrow_id = fr.borrow_id WHERE u.user_id = $1 AND fr.status IN ('unpaid', 'partial')`,
-    [user_id]
+        ON br.borrow_id = fr.borrow_id WHERE u.user_id = $1 AND fr.status = $2`,
+    [user_id, status]
   );
 };
