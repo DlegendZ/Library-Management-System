@@ -1,19 +1,30 @@
 import * as authService from "../services/auth.service.js";
 import * as authToken from "../authentication/token.js";
 import { query } from "../../database.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config({path: "../../.env"});
 
 export const loginController = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { accessToken, refreshToken, refreshId, expires_at } =
-      await authService.loginAdmin(email, password, req);
+    const { accessToken, refreshToken, refreshId, AT_expires_at, RT_expires_at } =
+      await authService.loginService(email, password, req);
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      expires: expires_at,
+      expires: RT_expires_at
+    });
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      expires: AT_expires_at
     });
 
     return res.status(200).json({ accessToken, refreshId });
@@ -69,3 +80,15 @@ export const logoutController = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const requireAccessTokenController = async (req, res, next) => {
+  const accessToken = req.cookies?.accessToken;
+  if (!accessToken) return res.status(401).json({message: "unauthorized"});
+  try {
+    const payload = jwt.verify(accessToken, process.env.JWT_SECRET);
+    next();
+  }
+  catch (err) {
+    return res.status(401).json({message: "unauthorized"});
+  }
+}

@@ -14,14 +14,14 @@ export const loginService = async (email, password, req) => {
   const password_verified = await argon2.verify(user.password_hash, password);
   if (!password_verified) throw new Error("Password not found");
 
-  const accessToken = authToken.signAccessToken(user);
+  const { accessToken, AT_expires_at } = authToken.signAccessToken(user);
   const refreshToken = authToken.generateRefreshToken();
 
-  const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
+  const { id: refreshId, RT_expires_at } = await authToken.saveRefreshToken({
     user,
     refreshToken,
     req,
   });
 
-  return { accessToken, refreshToken, refreshId, expires_at };
+  return { accessToken, refreshToken, refreshId, AT_expires_at, RT_expires_at };
 };

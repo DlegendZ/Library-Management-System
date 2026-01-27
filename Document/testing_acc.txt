@@ -1,0 +1,17 @@
+{
+  "full_name": "System Administrator",
+  "email": "admin@library.com",
+  "password": "Admin@123"
+}
+
+{
+  "full_name": "Main Librarian",
+  "email": "librarian@library.com",
+  "password": "Librarian@123"
+}
+
+{
+  "full_name": "John Doe",
+  "email": "member@library.com",
+  "password": "Member@123"
+}

@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import adminRoute from "./src/routes/admin.route.js";
 import librarianRoute from "./src/routes/librarian.route.js";
 import memberRoute from "./src/routes/member.route.js";
+import authRoute from "./src/routes/auth.route.js";
 import cookieParser from "cookie-parser";
+import { requireAccessTokenController } from "./src/controllers/auth.controllers.js";
 
 const app = express();
 app.use(express.json());
@@ -12,9 +14,10 @@ dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-app.use("/admin", adminRoute);
-app.use("/librarian", librarianRoute);
-app.use("/member", memberRoute);
+app.use("/admin", requireAccessTokenController, adminRoute);
+app.use("/librarian", requireAccessTokenController, librarianRoute);
+app.use("/member", requireAccessTokenController, memberRoute);
+app.use("/auth", authRoute);
 
 app.listen(PORT, () => {
   console.log(`SERVER IS RUNNING AT http://localhost:${PORT}`);

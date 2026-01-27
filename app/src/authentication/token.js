@@ -3,11 +3,16 @@ import crypto from "crypto";
 import { query } from "../../database.js";
 
 export function signAccessToken(user) {
-  return jwt.sign(
+  const accessToken = jwt.sign(
     { user_id: user.user_id, role_id: user.role_id },
     process.env.JWT_SECRET,
     { expiresIn: "15m" }
   );
+
+  const decoded = jwt.decode(accessToken);
+  const AT_expires_at = new Date(Date.now() + decoded.exp * 1000);
+
+  return { accessToken, AT_expires_at };
 }
 
 export function generateRefreshToken() {
@@ -22,7 +27,7 @@ export async function saveRefreshToken({ user, refreshToken, req }) {
   const id = crypto.randomUUID();
   const token_hash = sha256(refreshToken);
 
-  const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const RT_expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
   await query(
     `INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, ip, user_agent)
@@ -31,13 +36,13 @@ export async function saveRefreshToken({ user, refreshToken, req }) {
       id,
       user.user_id,
       token_hash,
-      expires_at,
+      RT_expires_at,
       req.ip,
       req.headers["user-agent"] || null,
     ]
   );
 
-  return { id, expires_at };
+  return { id, RT_expires_at };
 }
 
 export async function findRefreshToken(refreshToken) {
