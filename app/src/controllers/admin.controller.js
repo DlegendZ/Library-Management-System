@@ -5,7 +5,7 @@ export const registerAdminController = async (req, res) => {
 
   try {
     const result = await adminService.registerAdmin(full_name, email, password);
-    return res.status(201).json({ message: "Admin account created." });
+    return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -23,7 +23,7 @@ export const registerLibrarianController = async (req, res) => {
       email,
       password,
     );
-    return res.status(201).json({ message: "Librarian account created." });
+    return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -38,7 +38,7 @@ export const assignUserInfoController = async (req, res) => {
   
   try {
     const result = await adminService.assignUserInfoService(user_id, role_id, status);
-    return res.status(200).json({ message: "Updated user's info" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -176,7 +176,7 @@ export const addBookController = async (req, res) => {
       total_copies,
       available_copies,
     );
-    return res.status(200).json({ message: "Added a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -209,7 +209,7 @@ export const updateBookController = async (req, res) => {
       available_copies,
       status,
     );
-    return res.status(200).json({ message: "updated book's info" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -223,7 +223,7 @@ export const deleteBookController = async (req, res) => {
 
   try {
     const result = await adminService.deleteBook(book_id);
-    return res.status(200).json({ message: "Deleted a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -237,7 +237,7 @@ export const addCategoryController = async (req, res) => {
 
   try {
     const result = await adminService.addCategory(name, description);
-    return res.status(200).json({ message: "Added a category" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -257,7 +257,7 @@ export const updateCategoryController = async (req, res) => {
       name,
       description,
     );
-    return res.status(200).json({ message: "Updated a category" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -276,7 +276,7 @@ export const memberPayFinesController = async (req, res) => {
       borrow_id,
       amount,
     );
-    return res.status(200).json({ message: "Updated a fine record" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res

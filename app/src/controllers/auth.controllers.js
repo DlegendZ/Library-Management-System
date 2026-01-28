@@ -101,16 +101,16 @@ export const requireAccessTokenController = (req, res, next) => {
 };
 
 export const requireAdmin = (req, res, next) => {
-  if (req.user.role_id === 1) next();
+  if (req.user.role_id === 1) return next();
   return res.status(401).json({ message: "unauthorized" });
 };
 
 export const requireLibrarian = (req, res, next) => {
-  if (req.user.role_id === 2) next();
+  if (req.user.role_id === 2) return next();
   return res.status(401).json({ message: "unauthorized" });
 };
 
 export const requireMember = (req, res, next) => {
-  if (req.user.role_id === 3) next();
+  if (req.user.role_id === 3) return next();
   return res.status(401).json({ message: "unauthorized" });
 };

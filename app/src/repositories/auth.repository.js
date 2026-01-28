@@ -16,7 +16,7 @@ export const InsertRefreshToken = async (
 ) => {
   await query(
     `INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, ip, user_agent)
-    VALUES ($1, $2, $3, $4, $5, $6)`,
+    VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
     [uuid, user_id, token_hash, expires_at, ip, headers],
   );
 };
@@ -29,5 +29,5 @@ export const findRefreshToken = async (token_hash) => {
 };
 
 export const revokeRefreshToken = async(id) => {
-  await query(`DELETE FROM refresh_tokens WHERE id = $1`, [id]);
+  await query(`DELETE FROM refresh_tokens WHERE id = $1 RETURNING *`, [id]);
 }

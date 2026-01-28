@@ -10,14 +10,14 @@ export const getBooks = async () => {
 export const borrowBook = async (user_id, book_id) => {
   return await query(
     `INSERT INTO borrow_records (user_id, book_id, due_at) VALUES 
-        ($1, $2, NOW() + INTERVAL '14 days')`,
+        ($1, $2, NOW() + INTERVAL '14 days') RETURNING *`,
     [user_id, book_id],
   );
 };
 
 export const returnBook = async (borrow_id) => {
   return await query(
-    `UPDATE borrow_records SET returned_at = NOW(), status = '' WHERE borrow_id = $1`,
+    `UPDATE borrow_records SET returned_at = NOW(), status = '' WHERE borrow_id = $1 RETURNING *`,
     [borrow_id],
   );
 };

@@ -48,7 +48,7 @@ export const updateBook = async (
             total_copies = $5,
             available_copies = $6,
             status = $7
-        WHERE book_id = $8`,
+        WHERE book_id = $8 RETURNING *`,
     [
       category_id,
       isbn,
@@ -61,21 +61,6 @@ export const updateBook = async (
     ]
   );
 };
-
-// export const borrowBook = async (user_id, book_id, due_at) => {
-//   return await query(
-//     `INSERT INTO borrow_records (user_id, book_id, due_at) VALUES 
-//         ($1, $2, $3)`,
-//     [user_id, book_id, due_at]
-//   );
-// };
-
-// export const returnBook = async (borrow_id) => {
-//   return await query(
-//     `UPDATE borrow_records SET returned_at = NOW(), status = '' WHERE borrow_id = $1`,
-//     [borrow_id]
-//   );
-// };
 
 export const getBorrowRecords = async () => {
   return await query(

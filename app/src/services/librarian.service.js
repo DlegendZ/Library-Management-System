@@ -108,5 +108,5 @@ export const memberPayFinesService = async (borrow_id, amount) => {
   validator.finePaidAmountValidator(amount);
 
   const result = await librarianRepo.memberPayFinesRepo(borrow_id, amount);
-  return result.rows[0];
+  return getRowOrNull(result);
 }

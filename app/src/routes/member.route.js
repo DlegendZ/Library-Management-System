@@ -3,7 +3,7 @@ import * as memberController from "../controllers/member.controller.js";
 
 const router = Router();
 
-router.get("/books", memberController.viewBooksController);
+router.get("/books", memberController.viewBooksController); //done
 router.get("/members/:user_id/borrow-records", memberController.viewMyBorrowHistoryController);
 router.get("/members/:user_id/fine-records", memberController.viewMyFineStatusController);
 

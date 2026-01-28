@@ -70,17 +70,19 @@ export const returnBook = async (borrow_id) => {
 };
 
 export const viewBooks = async (category_id, title, author) => {
+  let result;
+
   if (category_id) {
     validator.idValidator(category_id);
-    const result = await memberRepo.getBooksByCategory(category_id);
+    result = await memberRepo.getBooksByCategory(category_id);
   } else if (title) {
     validator.titleValidator(title);
-    const result = await memberRepo.getBooksByTitle(title);
+    result = await memberRepo.getBooksByTitle(title);
   } else if (author) {
     validator.humanNameValidator(author);
-    const result = await memberRepo.getBooksByAuthor(author);
+    result = await memberRepo.getBooksByAuthor(author);
   } else {
-    const result = await memberRepo.getBooks();
+    result = await memberRepo.getBooks();
   }
 
   return getRowOrNull(result);

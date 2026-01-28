@@ -9,7 +9,7 @@ export const registerMemberController = async (req, res) => {
       email,
       password
     );
-    return res.status(201).json({ message: "Member account created." });
+    return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -43,7 +43,7 @@ export const addBookController = async (req, res) => {
       total_copies,
       available_copies
     );
-    return res.status(200).json({ message: "Added a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -76,7 +76,7 @@ export const updateBookController = async (req, res) => {
       available_copies,
       status
     );
-    return res.status(200).json({ message: "Updated a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -119,7 +119,7 @@ export const memberPayFinesController = async (req, res) => {
       borrow_id,
       amount,
     );
-    return res.status(200).json({ message: "Updated a fine record" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res

@@ -6,7 +6,7 @@ export const borrowBookController = async (req, res) => {
 
   try {
     const result = await memberService.borrowBook(user_id, book_id);
-    return res.status(200).json({ message: "Borrowed a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
@@ -22,7 +22,7 @@ export const returnBookController = async (req, res) => {
 
   try {
     const result = await memberService.returnBook(borrow_id);
-    return res.status(200).json({ message: "Returned a book" });
+    return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
     return res
