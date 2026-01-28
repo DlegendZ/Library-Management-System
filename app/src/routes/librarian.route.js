@@ -9,7 +9,7 @@ const router = Router();
 
 router.post("/members", librarianController.registerMemberController);
 router.post("/books", librarianController.addBookController);
-router.post("/borrow-records", librarianController.borrowBookController);
+// router.post("/borrow-records", librarianController.borrowBookController);
 
 router.get("/members", librarianController.viewAllMemberController);
 router.get("/borrow-records", librarianController.viewBorrowRecordsController);

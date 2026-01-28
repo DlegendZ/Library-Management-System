@@ -14,4 +14,6 @@ router.get("/books/authors", memberController.viewBooksByAuthorController);
 router.get("/members/:user_id/borrow-records", memberController.viewMyBorrowHistoryController);
 router.get("/members/:user_id/fine-records/status", memberController.viewMyFineStatusController);
 
+router.post("/borrow-records", memberController.borrowBookController);
+
 export default router;

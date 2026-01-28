@@ -71,6 +71,20 @@ import * as memberService from "../services/member.service.js";
 //   }
 // };
 
+export const borrowBookController = async (req, res) => {
+  const { user_id, book_id, due_at } = req.body;
+
+  try {
+    const result = await memberService.borrowBook(user_id, book_id, new Date(due_at));
+    return res.status(200).json({ message: "Borrowed a book" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
 export const viewBooksController = async (req, res) => {
   try {
     const result = await memberService.viewBooks();

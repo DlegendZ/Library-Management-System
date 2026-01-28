@@ -13,6 +13,14 @@ export const getBooks = async () => {
 //   ]);
 // };
 
+export const borrowBook = async (user_id, book_id, due_at) => {
+  return await query(
+    `INSERT INTO borrow_records (user_id, book_id, due_at) VALUES 
+        ($1, $2, $3)`,
+    [user_id, book_id, due_at]
+  );
+};
+
 export const getBooksByCategory = async (categoryId) => {
   return await query(`SELECT * FROM books WHERE category_id = $1`, [
     categoryId,
@@ -46,3 +54,21 @@ export const getMyFineStatus = async (user_id, status) => {
     [user_id, status]
   );
 };
+
+export const getMyStatus = async (user_id) => {
+  return await query(
+    `SELECT status FROM users WHERE user_id = $1`, [user_id]
+  );
+}
+
+export const getMyBorrowBooksCount = async (user_id) => {
+  return await query(
+    `SELECT COUNT(*) FROM borrow_records WHERE user_id = $1 `, [user_id]
+  );
+}
+
+export const getMyBookStatus = async (book_id) => {
+  return await query(
+    `SELECT status FROM books WHERE book_id = $1`, [book_id]
+  );
+}

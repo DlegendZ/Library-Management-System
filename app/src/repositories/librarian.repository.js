@@ -68,13 +68,13 @@ export const updateBook = async (
   );
 };
 
-export const borrowBook = async (user_id, book_id, due_at) => {
-  return await query(
-    `INSERT INTO borrow_records (user_id, book_id, due_at) VALUES 
-        ($1, $2, $3)`,
-    [user_id, book_id, due_at]
-  );
-};
+// export const borrowBook = async (user_id, book_id, due_at) => {
+//   return await query(
+//     `INSERT INTO borrow_records (user_id, book_id, due_at) VALUES 
+//         ($1, $2, $3)`,
+//     [user_id, book_id, due_at]
+//   );
+// };
 
 export const returnBook = async (borrow_id) => {
   return await query(

@@ -117,14 +117,14 @@ export const updateBook = async (
   return getRowOrNull(result);
 };
 
-export const borrowBook = async (user_id, book_id, due_at) => {
-  validator.idValidator(user_id);
-  validator.idValidator(book_id);
-  validator.deadlineTimeStampValidator(due_at);
+// export const borrowBook = async (user_id, book_id, due_at) => {
+//   validator.idValidator(user_id);
+//   validator.idValidator(book_id);
+//   validator.deadlineTimeStampValidator(due_at);
 
-  const result = await librarianRepo.borrowBook(user_id, book_id, due_at);
-  return getRowOrNull(result);
-};
+//   const result = await librarianRepo.borrowBook(user_id, book_id, due_at);
+//   return getRowOrNull(result);
+// };
 
 export const returnBook = async (borrow_id) => {
   validator.idValidator(borrow_id);
