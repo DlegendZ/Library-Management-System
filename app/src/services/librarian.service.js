@@ -126,12 +126,12 @@ export const updateBook = async (
 //   return getRowOrNull(result);
 // };
 
-export const returnBook = async (borrow_id) => {
-  validator.idValidator(borrow_id);
+// export const returnBook = async (borrow_id) => {
+//   validator.idValidator(borrow_id);
 
-  const result = await librarianRepo.returnBook(borrow_id);
-  return getRowOrNull(result);
-};
+//   const result = await librarianRepo.returnBook(borrow_id);
+//   return getRowOrNull(result);
+// };
 
 export const viewBorrowRecords = async () => {
   const result = await librarianRepo.getBorrowRecords();
@@ -142,3 +142,11 @@ export const viewFineRecords = async () => {
   const result = await librarianRepo.getFineRecords();
   return getRowOrNull(result);
 };
+
+export const memberPayFinesService = async (borrow_id, amount) => {
+  validator.idValidator(borrow_id);
+  validator.finePaidAmountValidator(amount);
+
+  const result = await librarianRepo.memberPayFinesRepo(borrow_id, amount);
+  return result.rows[0];
+}

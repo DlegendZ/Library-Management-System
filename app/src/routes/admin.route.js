@@ -25,6 +25,7 @@ router.post("/categories", adminController.addCategoryController);
 router.put("/users/roles/:user_id", adminController.assignRolesController);
 router.put("/users/status/:user_id", adminController.assignStatusController);
 router.put("/books/:book_id", adminController.updateBookController);
+router.put("/fine-records/:borrow_id", adminController.memberPayFinesController);
 
 router.delete("/books/:book_id", adminController.deleteBookController);
 
@@ -36,4 +37,4 @@ export default router;
 // 4. cek fungsi udh bener? done
 // 5. cek api udh bener? done
 // 6. cek respon udh bener? sama error responnya
-// 7. cek business logic udh bener?
+// 7. cek business logic udh bener? done

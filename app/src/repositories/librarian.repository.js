@@ -76,12 +76,12 @@ export const updateBook = async (
 //   );
 // };
 
-export const returnBook = async (borrow_id) => {
-  return await query(
-    `UPDATE borrow_records SET returned_at = NOW(), status = '' WHERE borrow_id = $1`,
-    [borrow_id]
-  );
-};
+// export const returnBook = async (borrow_id) => {
+//   return await query(
+//     `UPDATE borrow_records SET returned_at = NOW(), status = '' WHERE borrow_id = $1`,
+//     [borrow_id]
+//   );
+// };
 
 export const getBorrowRecords = async () => {
   return await query(
@@ -97,5 +97,12 @@ export const getFineRecords = async () => {
         ON fr.borrow_id = br.borrow_id RIGHT JOIN users u 
         ON br.user_id = u.user_id RIGHT JOIN books b
         ON b.book_id = br.book_id`
+  );
+};
+
+export const memberPayFinesRepo = async (borrow_id, amount) => {
+  return await query(
+    `UPDATE fine_records SET paid_amount = paid_amount + amount WHERE borrow_id = $2 RETURNING *`,
+    [paid_amount, borrow_id],
   );
 };

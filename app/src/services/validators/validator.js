@@ -192,3 +192,13 @@ export const roleCatDescValidator = (description) => {
     throw new badReqError("description length is invalid.");
   }
 };
+
+export const finePaidAmountValidator = (paid_amount) => {
+  if (!paid_amount) {
+    throw new badReqError("Paid amount is required.");
+  }
+
+  if (!Number.isInteger(paid_amount) || !(paid_amount >= 1)) {
+    throw new badReqError("Paid amount must be positive integer.");
+  }
+}

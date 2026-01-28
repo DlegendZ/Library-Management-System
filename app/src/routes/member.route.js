@@ -16,4 +16,6 @@ router.get("/members/:user_id/fine-records/status", memberController.viewMyFineS
 
 router.post("/borrow-records", memberController.borrowBookController);
 
+router.put("/borrow-records/:borrow_id", memberController.returnBookController);
+
 export default router;

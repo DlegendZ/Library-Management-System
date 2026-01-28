@@ -11,6 +11,13 @@ import argon2 from "argon2";
 //   return result.rows;
 // }
 
+class forbiddenRequest extends Error {
+  constructor(message) {
+    super.message;
+    this.status = 403;
+  }
+}
+
 export const registerAdmin = async (full_name, email, password) => {
   validator.humanNameValidator(full_name);
   validator.emailValidator(email);
@@ -65,7 +72,7 @@ export const registerLibrarian = async (full_name, email, password) => {
   const result = await adminRepo.insertLibrarian(
     full_name,
     email,
-    password_hash
+    password_hash,
   );
   return result.rows;
 };
@@ -141,7 +148,7 @@ export const addBook = async (
   title,
   author,
   total_copies,
-  available_copies
+  available_copies,
 ) => {
   validator.idValidator(category_id);
   validator.isbnValidator(isbn);
@@ -150,7 +157,14 @@ export const addBook = async (
   validator.totalCopiesValidator(total_copies);
   validator.availableCopiesValidator(total_copies, available_copies);
 
-  const result = await adminRepo.insertBook(category_id, isbn, title, author, total_copies, available_copies);
+  const result = await adminRepo.insertBook(
+    category_id,
+    isbn,
+    title,
+    author,
+    total_copies,
+    available_copies,
+  );
   return result.rows;
 };
 
@@ -162,7 +176,7 @@ export const updateBook = async (
   author,
   total_copies,
   available_copies,
-  status
+  status,
 ) => {
   validator.idValidator(book_id);
   validator.idValidator(category_id);
@@ -173,12 +187,29 @@ export const updateBook = async (
   validator.availableCopiesValidator(total_copies, available_copies);
   validator.statusValidator(status);
 
-  const result = await adminRepo.updateBook(book_id, category_id, isbn, title, author, total_copies, available_copies, status);
+  const result = await adminRepo.updateBook(
+    book_id,
+    category_id,
+    isbn,
+    title,
+    author,
+    total_copies,
+    available_copies,
+    status,
+  );
   return result.rows;
 };
 
 export const deleteBook = async (book_id) => {
   validator.idValidator(book_id);
+
+  const copies_result = await adminRepo.getBookInfo(book_id);
+  const { available_copies, total_copies } = copies_result.rows[0];
+
+  if (available_copies < total_copies)
+    throw new forbiddenRequest(
+      "Book cannot be deleted because it is currently borrowed.",
+    );
 
   const result = await adminRepo.deleteBook(book_id);
   return result.rows;
@@ -200,3 +231,11 @@ export const updateCategory = async (category_id, name, description) => {
   const result = await adminRepo.updateCategory(category_id, name, description);
   return result.rows;
 };
+
+export const memberPayFinesService = async (borrow_id, amount) => {
+  validator.idValidator(borrow_id);
+  validator.finePaidAmountValidator(amount);
+
+  const result = await adminRepo.memberPayFinesRepo(borrow_id, amount);
+  return result.rows[0];
+}

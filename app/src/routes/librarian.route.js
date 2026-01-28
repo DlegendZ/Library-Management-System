@@ -16,6 +16,7 @@ router.get("/borrow-records", librarianController.viewBorrowRecordsController);
 router.get("/fine-records", librarianController.viewFineRecordsController);
 
 router.put("/books/:book_id", librarianController.updateBookController);
-router.put("/borrow-records/:borrow_id", librarianController.returnBookController);
+router.put("/fine-records/:borrow_id", librarianController.memberPayFinesController);
+// router.put("/borrow-records/:borrow_id", librarianController.returnBookController);
 
 export default router;

@@ -72,10 +72,10 @@ import * as memberService from "../services/member.service.js";
 // };
 
 export const borrowBookController = async (req, res) => {
-  const { user_id, book_id, due_at } = req.body;
+  const { user_id, book_id } = req.body;
 
   try {
-    const result = await memberService.borrowBook(user_id, book_id, new Date(due_at));
+    const result = await memberService.borrowBook(user_id, book_id);
     return res.status(200).json({ message: "Borrowed a book" });
   } catch (err) {
     console.error("error :", err);
@@ -84,6 +84,21 @@ export const borrowBookController = async (req, res) => {
       .json({ message: err.status ? err.message : "Internal Server Error" });
   }
 };
+
+export const returnBookController = async (req, res) => {
+  const { borrow_id } = req.params;
+
+  try {
+    const result = await memberService.returnBook(borrow_id);
+    return res.status(200).json({ message: "Returned a book" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
 
 export const viewBooksController = async (req, res) => {
   try {

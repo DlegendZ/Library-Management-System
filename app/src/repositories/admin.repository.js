@@ -4,7 +4,7 @@ export const registerAdmin = async (full_name, email, password_hash) => {
   return await query(
     `INSERT INTO users (role_id, full_name, email, password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
-    [1, full_name, email.toLowerCase(), password_hash]
+    [1, full_name, email.toLowerCase(), password_hash],
   );
 };
 
@@ -12,21 +12,21 @@ export const insertLibrarian = async (full_name, email, password_hash) => {
   return await query(
     `INSERT INTO users (role_id, full_name, email, password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
-    [2, full_name, email.toLowerCase(), password_hash]
+    [2, full_name, email.toLowerCase(), password_hash],
   );
 };
 
 export const updateRoles = async (user_id, role_id) => {
   return await query(
     `UPDATE users SET role_id = $1 WHERE user_id = $2 RETURNING *`,
-    [role_id, user_id]
+    [role_id, user_id],
   );
 };
 
 export const updateStatus = async (user_id, status) => {
   return await query(
     `UPDATE users SET status = $1 WHERE user_id = $2 RETURNING *`,
-    [status, user_id]
+    [status, user_id],
   );
 };
 
@@ -56,7 +56,7 @@ export const getBorrowRecords = async () => {
   return await query(
     `SELECT * FROM users u LEFT JOIN borrow_records br 
         ON u.user_id = br.user_id RIGHT JOIN books b
-        ON b.book_id = br.book_id`
+        ON b.book_id = br.book_id`,
   );
 };
 
@@ -65,7 +65,7 @@ export const getFineRecords = async () => {
     `SELECT * FROM fine_records fr RIGHT JOIN borrow_records br 
         ON fr.borrow_id = br.borrow_id RIGHT JOIN users u 
         ON br.user_id = u.user_id RIGHT JOIN books b
-        ON b.book_id = br.book_id`
+        ON b.book_id = br.book_id`,
   );
 };
 
@@ -76,7 +76,7 @@ export const getMemberBorrowHistory = async (user_id) => {
         ON u.user_id = br.user_id RIGHT JOIN books b
         ON br.book_id = b.book_id
         WHERE u.role_id = 3 AND u.user_id = $1`,
-    [user_id]
+    [user_id],
   );
 };
 
@@ -87,7 +87,7 @@ export const getBooksWithBorrowers = async (status) => {
         ON b.book_id = br.book_id RIGHT JOIN
         users u ON u.user_id = br.user_id
         WHERE br.status = $1`,
-    [status]
+    [status],
   );
 };
 
@@ -98,7 +98,7 @@ export const getUsersWithFines = async (status) => {
         ON fr.borrow_id = br.borrow_id LEFT JOIN
         users u ON u.user_id = br.user_id
         WHERE fr.status = $1`,
-    [status]
+    [status],
   );
 };
 
@@ -112,14 +112,14 @@ export const insertBook = async (
   title,
   author,
   total_copies,
-  available_copies
+  available_copies,
 ) => {
   return await query(
     `INSERT INTO books 
         (category_id, isbn, title, author, total_copies, available_copies)
         VALUES
         ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [category_id, isbn, title, author, total_copies, available_copies]
+    [category_id, isbn, title, author, total_copies, available_copies],
   );
 };
 
@@ -131,7 +131,7 @@ export const updateBook = async (
   author,
   total_copies,
   available_copies,
-  status
+  status,
 ) => {
   return await query(
     `UPDATE books SET 
@@ -152,7 +152,14 @@ export const updateBook = async (
       available_copies,
       status,
       book_id,
-    ]
+    ],
+  );
+};
+
+export const getBookInfo = async (book_id) => {
+  return await query(
+    `SELECT available_copies, total_copies FROM books WHERE book_id = $1`,
+    [book_id],
   );
 };
 
@@ -165,13 +172,20 @@ export const deleteBook = async (book_id) => {
 export const insertCategory = async (name, description) => {
   return await query(
     `INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *`,
-    [name, description]
+    [name, description],
   );
 };
 
 export const updateCategory = async (category_id, name, description) => {
   return await query(
     `UPDATE categories SET name = $1, description = $2 WHERE category_id = $3 RETURNING *`,
-    [name, description, category_id]
+    [name, description, category_id],
+  );
+};
+
+export const memberPayFinesRepo = async (borrow_id, amount) => {
+  return await query(
+    `UPDATE fine_records SET paid_amount = paid_amount + amount WHERE borrow_id = $2 RETURNING *`,
+    [paid_amount, borrow_id],
   );
 };

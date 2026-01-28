@@ -1,4 +1,3 @@
-import { use, useReducer } from "react";
 import * as memberRepo from "../repositories/member.repository.js";
 import * as validator from "./validators/validator.js";
 // import argon2 from "argon2";
@@ -42,27 +41,57 @@ function getRowOrNull(result) {
 //   return { accessToken, refreshToken, refreshId, expires_at };
 // };
 
-export const borrowBook = async (user_id, book_id, due_at) => {
+export const borrowBook = async (user_id, book_id) => {
   validator.idValidator(user_id);
   validator.idValidator(book_id);
-  validator.deadlineTimeStampValidator(due_at);
+  // validator.deadlineTimeStampValidator(due_at);
 
   const status_result = await memberRepo.getMyStatus(user_id);
   const status = status_result.rows[0];
 
-  if (status === "suspended") throw new forbiddenRequest("User is suspended and cannot borrow books");
-  
-  const books_borrowed_count_result = await memberRepo.getMyBorrowBooksCount(user_id);
+  if (status === "suspended")
+    throw new forbiddenRequest("User is suspended and cannot borrow books");
+
+  const books_borrowed_count_result =
+    await memberRepo.getMyBorrowBooksCount(user_id);
   const books_borrowed_count = books_borrowed_count_result.rows[0];
 
-  if (books_borrowed_count >= 3) throw new forbiddenRequest("Borrow limit exceeded. Maximum allowed is 3 books.");
+  if (books_borrowed_count >= 3)
+    throw new forbiddenRequest(
+      "Borrow limit exceeded. Maximum allowed is 3 books.",
+    );
 
   const book_status_result = await memberRepo.getMyBookStatus(book_id);
   const book_status = book_status_result.rows[0];
 
-  if (book_status === "unavailable") throw new forbiddenRequest("Book is unavailable and cannot be borrowed.");
+  if (book_status === "unavailable")
+    throw new forbiddenRequest("Book is unavailable and cannot be borrowed.");
 
-  const result = await memberRepo.borrowBook(user_id, book_id, due_at);
+  const same_book_borrowed_result =
+    await memberRepo.getMyBorrowedBooks(book_id);
+  const same_book_borrowed = same_book_borrowed_result.rows[0];
+
+  if (same_book_borrowed > 0)
+    throw new forbiddenRequest(
+      "The same book cannot be borrowed more than once at the same time.",
+    );
+
+  const total_unpaid_fines_result = await memberRepo.getMyUnpaidFines(user_id);
+  const total_unpaid_fines = total_unpaid_fines_result.rows[0];
+
+  if (total_unpaid_fines > 500000)
+    throw new forbiddenRequest(
+      "Borrowing is not allowed because outstanding fines exceed the permitted limit.",
+    );
+
+  const result = await memberRepo.borrowBook(user_id, book_id);
+  return getRowOrNull(result);
+};
+
+export const returnBook = async (borrow_id) => {
+  validator.idValidator(borrow_id);
+
+  const result = await memberRepo.returnBook(borrow_id);
   return getRowOrNull(result);
 };
 

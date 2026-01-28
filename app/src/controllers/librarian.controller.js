@@ -170,19 +170,19 @@ export const updateBookController = async (req, res) => {
 //   }
 // };
 
-export const returnBookController = async (req, res) => {
-  const borrow_id = Number(req.params.borrow_id);
+// export const returnBookController = async (req, res) => {
+//   const borrow_id = Number(req.params.borrow_id);
 
-  try {
-    const result = await librarianService.returnBook(borrow_id);
-    return res.status(200).json({ message: "Returned a book" });
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+//   try {
+//     const result = await librarianService.returnBook(borrow_id);
+//     return res.status(200).json({ message: "Returned a book" });
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
 export const viewBorrowRecordsController = async (req, res) => {
   try {
@@ -200,6 +200,25 @@ export const viewFineRecordsController = async (req, res) => {
   try {
     const result = await librarianService.viewFineRecords();
     return res.status(200).json(result);
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const memberPayFinesController = async (req, res) => {
+  const { borrow_id } = req.params;
+
+  const { amount } = req.body;
+
+  try {
+    const result = await librarianService.memberPayFinesService(
+      borrow_id,
+      amount,
+    );
+    return res.status(200).json({ message: "Updated a fine record" });
   } catch (err) {
     console.error("error :", err);
     return res

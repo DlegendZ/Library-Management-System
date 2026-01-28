@@ -261,7 +261,7 @@ export const viewUserByStatusController = async (req, res) => {
 
 export const addBookController = async (req, res) => {
   const { category_id, isbn, title, author, total_copies, available_copies } =
-    req.body; 
+    req.body;
 
   try {
     const result = await adminService.addBook(
@@ -354,6 +354,25 @@ export const updateCategoryController = async (req, res) => {
       description,
     );
     return res.status(200).json({ message: "Updated a category" });
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
+export const memberPayFinesController = async (req, res) => {
+  const { borrow_id } = req.params;
+
+  const { amount } = req.body;
+
+  try {
+    const result = await adminService.memberPayFinesService(
+      borrow_id,
+      amount,
+    );
+    return res.status(200).json({ message: "Updated a fine record" });
   } catch (err) {
     console.error("error :", err);
     return res
