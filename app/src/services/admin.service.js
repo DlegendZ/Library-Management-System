@@ -1,15 +1,6 @@
 import * as adminRepo from "../repositories/admin.repository.js";
 import * as validator from "./validators/validator.js";
 import argon2 from "argon2";
-// import * as authToken from "../authentication/token.js";
-
-// function getRowOrNull(result) {
-//   if (result.rows.length === 0) {
-//     return null;
-//   }
-
-//   return result.rows;
-// }
 
 class forbiddenRequest extends Error {
   constructor(message) {
@@ -33,29 +24,6 @@ export const registerAdmin = async (full_name, email, password) => {
   const result = await adminRepo.registerAdmin(full_name, email, password_hash);
   return result.rows;
 };
-
-// export const loginAdmin = async (email, password, req) => {
-//   validator.emailValidator(email);
-//   validator.passwordValidator(password);
-
-//   const userRes = await adminRepo.getUserByEmail(email);
-//   const user = userRes.rows[0];
-
-//   if (!user) throw new Error("User not found");
-//   const password_verified = await argon2.verify(user.password_hash, password);
-//   if (!password_verified) throw new Error("Password not found");
-
-//   const accessToken = authToken.signAccessToken(user);
-//   const refreshToken = authToken.generateRefreshToken();
-
-//   const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
-//     user,
-//     refreshToken,
-//     req,
-//   });
-
-//   return { accessToken, refreshToken, refreshId, expires_at };
-// };
 
 export const registerLibrarian = async (full_name, email, password) => {
   validator.humanNameValidator(full_name);
@@ -90,12 +58,6 @@ export const assignUserInfoService = async (user_id, role_id, status) => {
 
   return result.rows;
 };
-
-// export const assignStatus = async (user_id, status) => {
-//   validator.statusValidator(status);
-//   const result = await adminRepo.updateStatus(user_id, status);
-//   return result.rows;
-// };
 
 export const viewAllUsers = async (status) => {
   if (status) {
@@ -149,12 +111,6 @@ export const viewUsersWithFines = async (status) => {
   const result = await adminRepo.getUsersWithFines(status);
   return result.rows;
 };
-
-// export const viewUserByStatus = async (status) => {
-//   validator.statusValidator(status);
-//   const result = await adminRepo.getUserByStatus(status);
-//   return result.rows;
-// };
 
 export const addBook = async (
   category_id,

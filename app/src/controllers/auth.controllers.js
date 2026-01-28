@@ -1,5 +1,4 @@
 import * as authService from "../services/auth.service.js";
-// import * as authToken from "../authentication/token.js";
 import { query } from "../../database.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";

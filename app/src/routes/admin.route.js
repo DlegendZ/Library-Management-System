@@ -2,9 +2,6 @@ import { Router } from "express";
 import * as adminController from "../controllers/admin.controller.js";
 
 const router = Router();
-// router.post("/login", adminController.loginAdminController);
-// router.post("/refresh", adminController.refATController);
-// router.post("/logout", adminController.logoutAdminController);
 
 router.get("/users", adminController.viewAllUsersController);
 router.get("/roles", adminController.viewRolesAssignmentsController);
@@ -15,7 +12,6 @@ router.get("/fine-records", adminController.viewFineRecordsController);
 router.get("/members/:user_id/borrow-records", adminController.viewMemberBorrowHistoryController);
 router.get("/books/members", adminController.viewBooksWithBorrowersController);
 router.get("/users/fine-records", adminController.viewUsersWithFinesController);
-// router.get("/users/status", adminController.viewUserByStatusController); //
 
 router.post("/admins", adminController.registerAdminController);
 router.post("/librarians", adminController.registerLibrarianController);
@@ -29,11 +25,3 @@ router.put("/fine-records/:borrow_id", adminController.memberPayFinesController)
 router.delete("/books/:book_id", adminController.deleteBookController);
 
 export default router;
-
-// yang kurang :
-// 2. validator dibenerin? done
-// 3. authentikasi dibenerin? done
-// 4. cek fungsi udh bener? done
-// 5. cek api udh bener? done
-// 6. cek respon udh bener? sama error responnya
-// 7. cek business logic udh bener? done

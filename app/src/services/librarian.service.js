@@ -1,7 +1,6 @@
 import * as librarianRepo from "../repositories/librarian.repository.js";
 import * as validator from "./validators/validator.js";
 import argon2 from "argon2";
-import * as authToken from "../authentication/token.js";
 
 function getRowOrNull(result) {
   if (result.rows.length === 0) {
@@ -10,29 +9,6 @@ function getRowOrNull(result) {
 
   return result.rows;
 }
-
-// export const loginLibrarian = async (email, password, req) => {
-//   validator.emailValidator(email);
-//   validator.passwordValidator(password);
-
-//   const userRes = await librarianRepo.getUserByEmail(email);
-//   const user = userRes.rows[0];
-
-//   if (!user) throw new Error("User not found");
-//   const password_verified = await argon2.verify(user.password_hash, password);
-//   if (!password_verified) throw new Error("Password not found");
-
-//   const accessToken = authToken.signAccessToken(user);
-//   const refreshToken = authToken.generateRefreshToken();
-
-//   const { id: refreshId, expires_at } = await authToken.saveRefreshToken({
-//     user,
-//     refreshToken,
-//     req,
-//   });
-
-//   return { accessToken, refreshToken, refreshId, expires_at };
-// };
 
 export const registerMember = async (full_name, email, password) => {
   validator.humanNameValidator(full_name);
@@ -116,22 +92,6 @@ export const updateBook = async (
   );
   return getRowOrNull(result);
 };
-
-// export const borrowBook = async (user_id, book_id, due_at) => {
-//   validator.idValidator(user_id);
-//   validator.idValidator(book_id);
-//   validator.deadlineTimeStampValidator(due_at);
-
-//   const result = await librarianRepo.borrowBook(user_id, book_id, due_at);
-//   return getRowOrNull(result);
-// };
-
-// export const returnBook = async (borrow_id) => {
-//   validator.idValidator(borrow_id);
-
-//   const result = await librarianRepo.returnBook(borrow_id);
-//   return getRowOrNull(result);
-// };
 
 export const viewBorrowRecords = async () => {
   const result = await librarianRepo.getBorrowRecords();
