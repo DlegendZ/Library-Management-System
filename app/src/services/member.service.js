@@ -95,31 +95,43 @@ export const returnBook = async (borrow_id) => {
   return getRowOrNull(result);
 };
 
-export const viewBooks = async () => {
-  const result = await memberRepo.getBooks();
+export const viewBooks = async (category_id, title, author) => {
+  if (category_id) {
+    validator.idValidator(category_id);
+    const result = await memberRepo.getBooksByCategory(category_id);
+  } else if (title) {
+    validator.titleValidator(title);
+    const result = await memberRepo.getBooksByTitle(title);
+  } else if (author) {
+    validator.humanNameValidator(author);
+    const result = await memberRepo.getBooksByAuthor(author);
+  } else {
+    const result = await memberRepo.getBooks();
+  }
+
   return getRowOrNull(result);
 };
 
-export const viewBooksByCategory = async (category_id) => {
-  validator.idValidator(category_id);
+// export const viewBooksByCategory = async (category_id) => {
+//   validator.idValidator(category_id);
 
-  const result = await memberRepo.getBooksByCategory(category_id);
-  return getRowOrNull(result);
-};
+//   const result = await memberRepo.getBooksByCategory(category_id);
+//   return getRowOrNull(result);
+// };
 
-export const viewBooksByTitle = async (title) => {
-  validator.titleValidator(title);
+// export const viewBooksByTitle = async (title) => {
+//   validator.titleValidator(title);
 
-  const result = await memberRepo.getBooksByTitle(title);
-  return getRowOrNull(result);
-};
+//   const result = await memberRepo.getBooksByTitle(title);
+//   return getRowOrNull(result);
+// };
 
-export const viewBooksByAuthor = async (author) => {
-  validator.humanNameValidator(author);
+// export const viewBooksByAuthor = async (author) => {
+//   validator.humanNameValidator(author);
 
-  const result = await memberRepo.getBooksByAuthor(author);
-  return getRowOrNull(result);
-};
+//   const result = await memberRepo.getBooksByAuthor(author);
+//   return getRowOrNull(result);
+// };
 
 export const viewMyBorrowHistory = async (user_id) => {
   validator.idValidator(user_id);

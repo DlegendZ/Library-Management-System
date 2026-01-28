@@ -2,6 +2,7 @@ import * as adminService from "../services/admin.service.js";
 // import * as authToken from "../authentication/token.js";
 // import { query } from "../../database.js";
 
+
 export const registerAdminController = async (req, res) => {
   const { full_name, email, password } = req.body;
 
@@ -103,12 +104,13 @@ export const registerLibrarianController = async (req, res) => {
   }
 };
 
-export const assignRolesController = async (req, res) => {
+export const assignUserInfoController = async (req, res) => {
   const { user_id } = req.params;
-  const { role_id } = req.body;
+  const { role_id, status } = req.body;
+  
   try {
-    const result = await adminService.assignRoles(user_id, role_id);
-    return res.status(200).json({ message: "Updated user's role" });
+    const result = await adminService.assignUserInfoService(user_id, role_id, status);
+    return res.status(200).json({ message: "Updated user's info" });
   } catch (err) {
     console.error("error :", err);
     return res
@@ -117,23 +119,25 @@ export const assignRolesController = async (req, res) => {
   }
 };
 
-export const assignStatusController = async (req, res) => {
-  const { user_id } = req.params;
-  const { status } = req.body;
-  try {
-    const result = await adminService.assignStatus(user_id, status);
-    return res.status(200).json({ message: "Updated user's status" });
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+// export const assignStatusController = async (req, res) => {
+//   const { user_id } = req.params;
+//   const { status } = req.body;
+//   try {
+//     const result = await adminService.assignStatus(user_id, status);
+//     return res.status(200).json({ message: "Updated user's status" });
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
 export const viewAllUsersController = async (req, res) => {
+  const { status } = req.query;
+
   try {
-    const result = await adminService.viewAllUsers();
+    const result = await adminService.viewAllUsers(status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -245,19 +249,19 @@ export const viewUsersWithFinesController = async (req, res) => {
   }
 };
 
-export const viewUserByStatusController = async (req, res) => {
-  const { status } = req.query;
+// export const viewUserByStatusController = async (req, res) => {
+//   const { status } = req.query;
 
-  try {
-    const result = await adminService.viewUserByStatus(status);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+//   try {
+//     const result = await adminService.viewUserByStatus(status);
+//     return res.status(200).json(result);
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
 export const addBookController = async (req, res) => {
   const { category_id, isbn, title, author, total_copies, available_copies } =

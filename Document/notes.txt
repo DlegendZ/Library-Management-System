@@ -43,3 +43,7 @@ Fine Rules
 Fixed fine per late day : done
 Fine accumulates : done
 Member cannot borrow if fine exceeds limit : done
+
+----
+
+1. Just check the error response and the json response.

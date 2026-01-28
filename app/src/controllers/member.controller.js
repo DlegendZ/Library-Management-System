@@ -72,7 +72,8 @@ import * as memberService from "../services/member.service.js";
 // };
 
 export const borrowBookController = async (req, res) => {
-  const { user_id, book_id } = req.body;
+  const { book_id } = req.body;
+  const user_id = req.user.user_id;
 
   try {
     const result = await memberService.borrowBook(user_id, book_id);
@@ -86,7 +87,9 @@ export const borrowBookController = async (req, res) => {
 };
 
 export const returnBookController = async (req, res) => {
-  const { borrow_id } = req.params;
+  const { user_id, borrow_id } = req.params;
+
+  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
 
   try {
     const result = await memberService.returnBook(borrow_id);
@@ -101,8 +104,9 @@ export const returnBookController = async (req, res) => {
 
 
 export const viewBooksController = async (req, res) => {
+  const {category_id, title, author} = req.query;
   try {
-    const result = await memberService.viewBooks();
+    const result = await memberService.viewBooks(category_id, title, author);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -112,50 +116,52 @@ export const viewBooksController = async (req, res) => {
   }
 };
 
-export const viewBooksByCategoryController = async (req, res) => {
-  const { category_id } = req.query;
+// export const viewBooksByCategoryController = async (req, res) => {
+//   const { category_id } = req.query;
 
-  try {
-    const result = await memberService.viewBooksByCategory(category_id);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+//   try {
+//     const result = await memberService.viewBooksByCategory(category_id);
+//     return res.status(200).json(result);
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
-export const viewBooksByTitleController = async (req, res) => {
-  const { title } = req.query;
+// export const viewBooksByTitleController = async (req, res) => {
+//   const { title } = req.query;
 
-  try {
-    const result = await memberService.viewBooksByTitle(title);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+//   try {
+//     const result = await memberService.viewBooksByTitle(title);
+//     return res.status(200).json(result);
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
-export const viewBooksByAuthorController = async (req, res) => {
-  const { author } = req.query;
+// export const viewBooksByAuthorController = async (req, res) => {
+//   const { author } = req.query;
 
-  try {
-    const result = await memberService.viewBooksByAuthor(author);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
+//   try {
+//     const result = await memberService.viewBooksByAuthor(author);
+//     return res.status(200).json(result);
+//   } catch (err) {
+//     console.error("error :", err);
+//     return res
+//       .status(err.status || 500)
+//       .json({ message: err.status ? err.message : "Internal Server Error" });
+//   }
+// };
 
 export const viewMyBorrowHistoryController = async (req, res) => {
   const { user_id } = req.params;
+
+  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
 
   try {
     const result = await memberService.viewMyBorrowHistory(user_id);
@@ -171,6 +177,8 @@ export const viewMyBorrowHistoryController = async (req, res) => {
 export const viewMyFineStatusController = async (req, res) => {
   const { user_id } = req.params;
   const { status } = req.query;
+
+  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
 
   try {
     const result = await memberService.viewMyFineStatus(user_id, status);

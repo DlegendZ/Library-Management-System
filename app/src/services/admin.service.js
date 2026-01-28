@@ -77,20 +77,34 @@ export const registerLibrarian = async (full_name, email, password) => {
   return result.rows;
 };
 
-export const assignRoles = async (user_id, role_id) => {
-  validator.idValidator(role_id);
-  const result = await adminRepo.updateRoles(user_id, role_id);
+export const assignUserInfoService = async (user_id, role_id, status) => {
+  validator.idValidator(user_id);
+
+  if (role_id) {
+    validator.idValidator(role_id);
+    const result = await adminRepo.updateRoles(user_id, role_id);
+  } else if (status) {
+    validator.statusValidator(status);
+    const result = await adminRepo.updateStatus(user_id, status);
+  }
+
   return result.rows;
 };
 
-export const assignStatus = async (user_id, status) => {
-  validator.statusValidator(status);
-  const result = await adminRepo.updateStatus(user_id, status);
-  return result.rows;
-};
+// export const assignStatus = async (user_id, status) => {
+//   validator.statusValidator(status);
+//   const result = await adminRepo.updateStatus(user_id, status);
+//   return result.rows;
+// };
 
-export const viewAllUsers = async () => {
-  const result = await adminRepo.getAllUsers();
+export const viewAllUsers = async (status) => {
+  if (status) {
+    validator.statusValidator(status);
+    const result = await adminRepo.getUserByStatus(status);
+  } else {
+    const result = await adminRepo.getAllUsers();
+  }
+
   return result.rows;
 };
 
@@ -136,11 +150,11 @@ export const viewUsersWithFines = async (status) => {
   return result.rows;
 };
 
-export const viewUserByStatus = async (status) => {
-  validator.statusValidator(status);
-  const result = await adminRepo.getUserByStatus(status);
-  return result.rows;
-};
+// export const viewUserByStatus = async (status) => {
+//   validator.statusValidator(status);
+//   const result = await adminRepo.getUserByStatus(status);
+//   return result.rows;
+// };
 
 export const addBook = async (
   category_id,
@@ -238,4 +252,4 @@ export const memberPayFinesService = async (borrow_id, amount) => {
 
   const result = await adminRepo.memberPayFinesRepo(borrow_id, amount);
   return result.rows[0];
-}
+};
