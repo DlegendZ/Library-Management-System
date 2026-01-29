@@ -9,11 +9,11 @@ export function signAccessToken(user) {
   const accessToken = jwt.sign(
     { user_id: user.user_id, role_id: user.role_id },
     process.env.JWT_SECRET,
-    { expiresIn: "15m" },
+    { expiresIn: "5s" },
   );
 
   const decoded = jwt.decode(accessToken);
-  const AT_expires_at = new Date(Date.now() + decoded.exp * 1000);
+  const AT_expires_at = new Date(decoded.exp * 1000);
 
   return { accessToken, AT_expires_at };
 }
@@ -64,7 +64,7 @@ export const loginService = async (email, password, req) => {
   const user = userRes.rows[0];
 
   if (!user) throw new Error("User not found");
-  const password_verified = await argon2.verify(user.password_hash, password);
+  const password_verified = await argon2.verify(user.u_password_hash, password);
   if (!password_verified) throw new Error("Password not found");
 
   const { accessToken, AT_expires_at } = signAccessToken(user);

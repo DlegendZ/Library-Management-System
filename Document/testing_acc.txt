@@ -15,3 +15,10 @@
   "email": "member@library.com",
   "password": "Member@123"
 }
+
+{
+  "full_name": "John Doe",
+  "email": "john@example.com",
+  "password": "@Secret123"
+}
+

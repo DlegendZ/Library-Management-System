@@ -31,7 +31,7 @@ export const loginController = async (req, res) => {
       expires: AT_expires_at,
     });
 
-    return res.status(200).json({ accessToken, refreshId });
+    return res.status(200).json({ message: "Login successful." });
   } catch (err) {
     console.error("error :", err);
     if (err.status || err.message === "User not found") {
@@ -53,8 +53,16 @@ export const refATController = async (req, res) => {
       row.user_id,
     ]);
     const user = userRes.rows[0];
-    const accessToken = authService.signAccessToken(user);
-    return res.status(200).json({ accessToken });
+    const { accessToken, AT_expires_at } = authService.signAccessToken(user);
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      expires: AT_expires_at,
+    });
+
+    return res.status(200).json({ message: "New access token issued." });
   } catch (err) {
     console.log("error :", err);
     return res.status(500).json({ error: "Internal server error" });
@@ -77,7 +85,7 @@ export const logoutController = async (req, res) => {
 
       res.status(200).json({ message: "Logged out" });
     } else {
-      res.status(200).json({ message: "Required refresh token" });
+      res.status(400).json({ message: "Required refresh token" });
     }
   } catch (err) {
     console.error("Error : ", err);
@@ -85,10 +93,34 @@ export const logoutController = async (req, res) => {
   }
 };
 
-export const requireAccessTokenController = (req, res, next) => {
-  const accessToken = req.cookies?.accessToken;
-  if (!accessToken) return res.status(401).json({ message: "unauthorized" });
+export const refreshAccessToken = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken) throw new Error("Refresh token not found");
+  const row = await authService.findRefreshToken(refreshToken);
+  if (!row) throw new Error("Invalid refresh token");
+
+  const userRes = await query(`SELECT * FROM users WHERE user_id = $1`, [
+    row.user_id,
+  ]);
+  const user = userRes.rows[0];
+  const { accessToken, AT_expires_at } = authService.signAccessToken(user);
+
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true,
+    secure: false,
+    sameSite: "lax",
+    expires: AT_expires_at,
+  });
+
+  return accessToken;
+};
+
+export const requireAccessTokenController = async (req, res, next) => {
   try {
+    let accessToken = req.cookies?.accessToken;
+    if (!accessToken) {
+      accessToken = await refreshAccessToken(req, res);
+    }
     const { user_id, role_id } = jwt.verify(
       accessToken,
       process.env.JWT_SECRET,

@@ -53,7 +53,7 @@ export const registerLibrarian = async (full_name, email, password) => {
   return getRowOrNull(result);
 };
 
-export const assignUserInfoService = async (user_id, role_id, status) => {
+export const assignUserRoleOrStatusService = async (user_id, role_id, status) => {
   validator.idValidator(user_id);
   let result;
 
@@ -97,30 +97,34 @@ export const viewAllCategories = async () => {
   return getRowOrNull(result);
 };
 
-export const viewBorrowRecords = async () => {
-  const result = await adminRepo.getBorrowRecords();
+export const viewBorrowRecords = async (status) => {
+    let result;
+    if (status) {
+      validator.statusValidator(status);
+      result = await adminRepo.getBooksWithBorrowers(status);
+    }
+    else {
+      result = await adminRepo.getBorrowRecords();
+    }
+
   return getRowOrNull(result);
 };
 
-export const viewFineRecords = async () => {
-  const result = await adminRepo.getFineRecords();
+export const viewFineRecords = async (status) => {
+  let result;
+  if (status) {
+    validator.statusValidator(status);
+    result = await adminRepo.getUsersWithFines(status);
+  }
+  else {
+    result = await adminRepo.getFineRecords();
+  }
+
   return getRowOrNull(result);
 };
 
 export const viewMemberBorrowHistory = async (user_id) => {
   const result = await adminRepo.getMemberBorrowHistory(user_id);
-  return getRowOrNull(result);
-};
-
-export const viewBooksWithBorrowers = async (status) => {
-  validator.statusValidator(status);
-  const result = await adminRepo.getBooksWithBorrowers(status);
-  return getRowOrNull(result);
-};
-
-export const viewUsersWithFines = async (status) => {
-  validator.statusValidator(status);
-  const result = await adminRepo.getUsersWithFines(status);
   return getRowOrNull(result);
 };
 

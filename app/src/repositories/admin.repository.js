@@ -2,7 +2,7 @@ import { query } from "../../database.js";
 
 export const registerAdmin = async (full_name, email, password_hash) => {
   return await query(
-    `INSERT INTO users (role_id, full_name, email, password_hash)
+    `INSERT INTO users (role_id, u_full_name, u_email, u_password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
     [1, full_name, email.toLowerCase(), password_hash],
   );
@@ -10,7 +10,7 @@ export const registerAdmin = async (full_name, email, password_hash) => {
 
 export const insertLibrarian = async (full_name, email, password_hash) => {
   return await query(
-    `INSERT INTO users (role_id, full_name, email, password_hash)
+    `INSERT INTO users (role_id, u_full_name, u_email, u_password_hash)
         VALUES ($1, $2, $3, $4) RETURNING *`,
     [2, full_name, email.toLowerCase(), password_hash],
   );
@@ -25,7 +25,7 @@ export const updateRoles = async (user_id, role_id) => {
 
 export const updateStatus = async (user_id, status) => {
   return await query(
-    `UPDATE users SET status = $1 WHERE user_id = $2 RETURNING *`,
+    `UPDATE users SET u_status = $1 WHERE user_id = $2 RETURNING *`,
     [status, user_id],
   );
 };
@@ -45,7 +45,9 @@ export const getRolesAssignments = async () => {
 };
 
 export const getBooks = async () => {
-  return await query(`SELECT * FROM books`);
+  return await query(
+    `SELECT * FROM books INNER JOIN categories ON books.category_id = categories.category_id`,
+  );
 };
 
 export const getCategories = async () => {
@@ -86,7 +88,7 @@ export const getBooksWithBorrowers = async (status) => {
         books b LEFT JOIN borrow_records br 
         ON b.book_id = br.book_id RIGHT JOIN
         users u ON u.user_id = br.user_id
-        WHERE br.status = $1`,
+        WHERE br.br_status = $1`,
     [status],
   );
 };
@@ -97,13 +99,13 @@ export const getUsersWithFines = async (status) => {
         fine_records fr RIGHT JOIN borrow_records br 
         ON fr.borrow_id = br.borrow_id LEFT JOIN
         users u ON u.user_id = br.user_id
-        WHERE fr.status = $1`,
+        WHERE fr.fr_status = $1`,
     [status],
   );
 };
 
 export const getUserByStatus = async (status) => {
-  return await query(`SELECT * FROM users WHERE status = $1`, [status]);
+  return await query(`SELECT * FROM users WHERE u_status = $1`, [status]);
 };
 
 export const insertBook = async (
@@ -116,7 +118,7 @@ export const insertBook = async (
 ) => {
   return await query(
     `INSERT INTO books 
-        (category_id, isbn, title, author, total_copies, available_copies)
+        (category_id, b_isbn, b_title, b_author, b_total_copies, b_available_copies)
         VALUES
         ($1, $2, $3, $4, $5, $6) RETURNING *`,
     [category_id, isbn, title, author, total_copies, available_copies],
@@ -136,12 +138,12 @@ export const updateBook = async (
   return await query(
     `UPDATE books SET 
             category_id = $1,
-            isbn = $2,
-            title = $3,
-            author = $4,
-            total_copies = $5,
-            available_copies = $6,
-            status = $7
+            b_isbn = $2,
+            b_title = $3,
+            b_author = $4,
+            b_total_copies = $5,
+            b_available_copies = $6,
+            b_status = $7
         WHERE book_id = $8 RETURNING *`,
     [
       category_id,
@@ -158,7 +160,7 @@ export const updateBook = async (
 
 export const getBookInfo = async (book_id) => {
   return await query(
-    `SELECT available_copies, total_copies FROM books WHERE book_id = $1`,
+    `SELECT b_available_copies, b_total_copies FROM books WHERE book_id = $1`,
     [book_id],
   );
 };
@@ -171,21 +173,21 @@ export const deleteBook = async (book_id) => {
 
 export const insertCategory = async (name, description) => {
   return await query(
-    `INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING *`,
+    `INSERT INTO categories (c_name, c_description) VALUES ($1, $2) RETURNING *`,
     [name, description],
   );
 };
 
 export const updateCategory = async (category_id, name, description) => {
   return await query(
-    `UPDATE categories SET name = $1, description = $2 WHERE category_id = $3 RETURNING *`,
+    `UPDATE categories SET c_name = $1, description = $2 WHERE category_id = $3 RETURNING *`,
     [name, description, category_id],
   );
 };
 
 export const memberPayFinesRepo = async (borrow_id, amount) => {
   return await query(
-    `UPDATE fine_records SET paid_amount = paid_amount + amount WHERE borrow_id = $2 RETURNING *`,
-    [paid_amount, borrow_id],
+    `UPDATE fine_records SET fr_paid_amount = fr_paid_amount + $1 WHERE borrow_id = $2 RETURNING *`,
+    [amount, borrow_id],
   );
 };

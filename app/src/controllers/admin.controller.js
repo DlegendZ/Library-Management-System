@@ -32,12 +32,12 @@ export const registerLibrarianController = async (req, res) => {
   }
 };
 
-export const assignUserInfoController = async (req, res) => {
+export const assignUserRoleOrStatusController = async (req, res) => {
   const { user_id } = req.params;
   const { role_id, status } = req.body;
   
   try {
-    const result = await adminService.assignUserInfoService(user_id, role_id, status);
+    const result = await adminService.assignUserRoleOrStatusService(user_id, role_id, status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -98,8 +98,10 @@ export const viewAllCategoriesController = async (req, res) => {
 };
 
 export const viewBorrowRecordsController = async (req, res) => {
+  const { status } = req.query;
+
   try {
-    const result = await adminService.viewBorrowRecords();
+    const result = await adminService.viewBorrowRecords(status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -110,8 +112,10 @@ export const viewBorrowRecordsController = async (req, res) => {
 };
 
 export const viewFineRecordsController = async (req, res) => {
+  const { status } = req.query;
+
   try {
-    const result = await adminService.viewFineRecords();
+    const result = await adminService.viewFineRecords(status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -126,34 +130,6 @@ export const viewMemberBorrowHistoryController = async (req, res) => {
 
   try {
     const result = await adminService.viewMemberBorrowHistory(user_id);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
-
-export const viewBooksWithBorrowersController = async (req, res) => {
-  const { status } = req.query;
-
-  try {
-    const result = await adminService.viewBooksWithBorrowers(status);
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error("error :", err);
-    return res
-      .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
-  }
-};
-
-export const viewUsersWithFinesController = async (req, res) => {
-  const { status } = req.query;
-
-  try {
-    const result = await adminService.viewUsersWithFines(status);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);

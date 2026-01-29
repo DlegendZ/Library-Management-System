@@ -16,12 +16,11 @@ export const borrowBookController = async (req, res) => {
 };
 
 export const returnBookController = async (req, res) => {
-  const { user_id, borrow_id } = req.params;
-
-  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
+  const { user_id } = req.user;
+  const { borrow_id } = req.params;
 
   try {
-    const result = await memberService.returnBook(borrow_id);
+    const result = await memberService.returnBook(user_id, borrow_id);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -33,9 +32,9 @@ export const returnBookController = async (req, res) => {
 
 
 export const viewBooksController = async (req, res) => {
-  const {category_id, title, author} = req.query;
+  const {category_name, title, author} = req.query;
   try {
-    const result = await memberService.viewBooks(category_id, title, author);
+    const result = await memberService.viewBooks(category_name, title, author);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -46,9 +45,7 @@ export const viewBooksController = async (req, res) => {
 };
 
 export const viewMyBorrowHistoryController = async (req, res) => {
-  const { user_id } = req.params;
-
-  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
+  const { user_id } = req.user;
 
   try {
     const result = await memberService.viewMyBorrowHistory(user_id);
@@ -62,14 +59,12 @@ export const viewMyBorrowHistoryController = async (req, res) => {
 };
 
 export const viewMyFineStatusController = async (req, res) => {
-  const { user_id } = req.params;
+  const { user_id } = req.user;
   const { status } = req.query;
-
-  if (req.user.user_id !== user_id) return res.status(401).json({message: "unauthorized"});
 
   try {
     const result = await memberService.viewMyFineStatus(user_id, status);
-    return res.status(200).json(result);
+    return res.status(200).json(result);  
   } catch (err) {
     console.error("error :", err);
     return res

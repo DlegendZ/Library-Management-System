@@ -10,15 +10,13 @@ router.get("/categories", adminController.viewAllCategoriesController);
 router.get("/borrow-records", adminController.viewBorrowRecordsController);
 router.get("/fine-records", adminController.viewFineRecordsController);
 router.get("/members/:user_id/borrow-records", adminController.viewMemberBorrowHistoryController);
-router.get("/books/members", adminController.viewBooksWithBorrowersController);
-router.get("/users/fine-records", adminController.viewUsersWithFinesController);
 
 router.post("/admins", adminController.registerAdminController);
 router.post("/librarians", adminController.registerLibrarianController);
 router.post("/books", adminController.addBookController);
 router.post("/categories", adminController.addCategoryController);
 
-router.put("/users/:user_id", adminController.assignUserInfoController);
+router.put("/users/:user_id", adminController.assignUserRoleOrStatusController);
 router.put("/books/:book_id", adminController.updateBookController);
 router.put("/fine-records/:borrow_id", adminController.memberPayFinesController);
 
