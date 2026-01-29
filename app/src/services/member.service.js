@@ -35,14 +35,20 @@ export const borrowBook = async (user_id, book_id) => {
       "Borrow limit exceeded. Maximum allowed is 3 books.",
     );
 
+  const find_book_result = await memberRepo.findMyBook(book_id);
+  if (find_book_result.rows.length === 0)
+    throw new forbiddenRequest("Book not found");
+
   const book_status_result = await memberRepo.getMyBookStatus(book_id);
   const book_status = book_status_result.rows[0].b_status;
 
-  if (book_status === "unavailable" || !book_status)
+  if (book_status === "unavailable")
     throw new forbiddenRequest("Book is unavailable and cannot be borrowed.");
 
-  const same_book_borrowed_result =
-    await memberRepo.getMyBorrowedBooks(user_id, book_id);
+  const same_book_borrowed_result = await memberRepo.getMyBorrowedBooks(
+    user_id,
+    book_id,
+  );
   const same_book_borrowed = Number(same_book_borrowed_result.rows[0].count);
 
   if (same_book_borrowed > 0)
@@ -53,7 +59,7 @@ export const borrowBook = async (user_id, book_id) => {
   const total_unpaid_fines_result = await memberRepo.getMyUnpaidFines(user_id);
   const total_unpaid_fines = Number(total_unpaid_fines_result.rows[0].sum) || 0;
 
-  if (total_unpaid_fines > 500000)
+  if (total_unpaid_fines > 100000)
     throw new forbiddenRequest(
       "Borrowing is not allowed because outstanding fines exceed the permitted limit.",
     );

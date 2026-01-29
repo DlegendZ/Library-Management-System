@@ -58,7 +58,9 @@ export const getMyFineStatus = async (user_id, status) => {
 };
 
 export const getMyStatus = async (user_id) => {
-  return await query(`SELECT u_status FROM users WHERE user_id = $1`, [user_id]);
+  return await query(`SELECT u_status FROM users WHERE user_id = $1`, [
+    user_id,
+  ]);
 };
 
 export const getMyBorrowBooksCount = async (user_id) => {
@@ -68,8 +70,14 @@ export const getMyBorrowBooksCount = async (user_id) => {
   );
 };
 
+export const findMyBook = async (book_id) => {
+  return await query(`SELECT * FROM books WHERE book_id = $1`, [book_id]);
+};
+
 export const getMyBookStatus = async (book_id) => {
-  return await query(`SELECT b_status FROM books WHERE book_id = $1`, [book_id]);
+  return await query(`SELECT b_status FROM books WHERE book_id = $1`, [
+    book_id,
+  ]);
 };
 
 export const getMyBorrowedBooks = async (user_id, book_id) => {

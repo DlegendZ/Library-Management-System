@@ -9,7 +9,7 @@ export function signAccessToken(user) {
   const accessToken = jwt.sign(
     { user_id: user.user_id, role_id: user.role_id },
     process.env.JWT_SECRET,
-    { expiresIn: "5s" },
+    { expiresIn: "15m" },
   );
 
   const decoded = jwt.decode(accessToken);
