@@ -46,7 +46,7 @@ export const getRolesAssignments = async () => {
 
 export const getBooks = async () => {
   return await query(
-    `SELECT * FROM books INNER JOIN categories ON books.category_id = categories.category_id`,
+    `SELECT * FROM books INNER JOIN categories ON books.category_id = categories.category_id WHERE b_is_deleted = false`,
   );
 };
 

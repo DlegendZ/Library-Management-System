@@ -3,7 +3,7 @@ import { query } from "../../database.js";
 export const getBooks = async () => {
   return await query(
     `SELECT * FROM books b JOIN categories c
-        ON b.category_id = c.category_id`,
+        ON b.category_id = c.category_id WHERE b.b_is_deleted = false`,
   );
 };
 
@@ -24,17 +24,17 @@ export const returnBook = async (user_id, borrow_id) => {
 
 export const getBooksByCategory = async (category_name) => {
   return await query(
-    `SELECT * FROM books INNER JOIN categories ON books.category_id = categories.category_id WHERE c_name = $1`,
+    `SELECT * FROM books INNER JOIN categories ON books.category_id = categories.category_id WHERE c_name = $1 AND b_is_deleted = false`,
     [category_name],
   );
 };
 
 export const getBooksByTitle = async (title) => {
-  return await query(`SELECT * FROM books WHERE b_title = $1`, [title]);
+  return await query(`SELECT * FROM books WHERE b_title = $1 AND b_is_deleted = false`, [title]);
 };
 
 export const getBooksByAuthor = async (author) => {
-  return await query(`SELECT * FROM books WHERE b_author = $1`, [author]);
+  return await query(`SELECT * FROM books WHERE b_author = $1 AND b_is_deleted = false`, [author]);
 };
 
 export const getMyBorrowHistory = async (user_id) => {
