@@ -132,7 +132,7 @@ src/
 ### 2️⃣ Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone <repo-url>
 cd <your-project-name>
 ```
 
