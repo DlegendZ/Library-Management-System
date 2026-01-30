@@ -151,7 +151,7 @@ Frontend:
 Backend:
 
 ```bash
-/temp/backend/Library Management System
+/temp/backend/Library Management System Backend
 ```
 
 ```bash
@@ -198,7 +198,7 @@ node -e "console.log(require('crypto').randomBytes(128).toString('hex'))"
 Make sure you are in the folder :
 
 ```bash
-/temp/backend/Library Management System/app
+/temp/backend/Library Management System Backend/app
 ```
 
 ```bash
