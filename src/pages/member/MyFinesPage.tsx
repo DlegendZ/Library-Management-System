@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { memberService } from '@/services/member.service';
-import type { FineRecord } from '@/types/api';
-import { handleApiError } from '@/lib/api';
+import React, { useEffect, useState } from "react";
+import { memberService } from "@/services/member.service";
+import type { FineRecord } from "@/types/api";
+import { handleApiError } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -9,30 +9,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle } from 'lucide-react';
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle } from "lucide-react";
 
 const MyFinesPage: React.FC = () => {
   const [records, setRecords] = useState<FineRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('unpaid');
+  const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("unpaid");
 
   const fetchRecords = async () => {
     try {
       setIsLoading(true);
       const data = await memberService.getMyFineRecords(statusFilter);
       setRecords(data);
-      setError('');
+      setError("");
     } catch (err) {
       setError(handleApiError(err));
     } finally {
@@ -46,23 +46,25 @@ const MyFinesPage: React.FC = () => {
 
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'paid':
-        return 'default';
-      case 'partial':
-        return 'secondary';
-      case 'unpaid':
-        return 'destructive';
-      case 'waived':
-        return 'outline';
+      case "paid":
+        return "default";
+      case "partial":
+        return "secondary";
+      case "unpaid":
+        return "destructive";
+      case "waived":
+        return "outline";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
   // Calculate total outstanding
   const totalOutstanding = records.reduce((sum, record) => {
-    if (record.fr_status === 'unpaid' || record.fr_status === 'partial') {
-      return sum + ((record.fr_amount || 0) - (record.fr_paid_amount || 0));
+    if (record.fr_status === "unpaid" || record.fr_status === "partial") {
+      const amount = Number(record.fr_amount) || 0;
+      const paidAmount = Number(record.fr_paid_amount) || 0;
+      return sum + (amount - paidAmount);
     }
     return sum;
   }, 0);
@@ -99,8 +101,8 @@ const MyFinesPage: React.FC = () => {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            You have <strong>${totalOutstanding.toFixed(2)}</strong> in outstanding fines. 
-            Please visit the library to make a payment.
+            You have <strong>${totalOutstanding.toFixed(2)}</strong> in
+            outstanding fines. Please visit the library to make a payment.
           </AlertDescription>
         </Alert>
       )}
@@ -126,26 +128,37 @@ const MyFinesPage: React.FC = () => {
           <TableBody>
             {records.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={5}
+                  className="text-center text-muted-foreground"
+                >
                   No fine records found
                 </TableCell>
               </TableRow>
             ) : (
-              records.map((record, index) => (
-                <TableRow key={record.fine_id || index}>
-                  <TableCell className="font-medium">{record.b_title || 'N/A'}</TableCell>
-                  <TableCell>${record.fr_amount?.toFixed(2) || '0.00'}</TableCell>
-                  <TableCell>${record.fr_paid_amount?.toFixed(2) || '0.00'}</TableCell>
-                  <TableCell className="font-medium">
-                    ${((record.fr_amount || 0) - (record.fr_paid_amount || 0)).toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(record.fr_status)}>
-                      {record.fr_status || 'N/A'}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))
+              records.map((record, index) => {
+                const amount = Number(record.fr_amount) || 0;
+                const paidAmount = Number(record.fr_paid_amount) || 0;
+                const remaining = amount - paidAmount;
+
+                return (
+                  <TableRow key={record.fine_id || index}>
+                    <TableCell className="font-medium">
+                      {record.b_title || "N/A"}
+                    </TableCell>
+                    <TableCell>${amount.toFixed(2)}</TableCell>
+                    <TableCell>${paidAmount.toFixed(2)}</TableCell>
+                    <TableCell className="font-medium">
+                      ${remaining.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(record.fr_status)}>
+                        {record.fr_status || "N/A"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

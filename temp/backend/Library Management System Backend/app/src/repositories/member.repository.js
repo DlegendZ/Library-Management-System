@@ -17,7 +17,7 @@ export const borrowBook = async (user_id, book_id) => {
 
 export const returnBook = async (user_id, borrow_id) => {
   return await query(
-    `UPDATE borrow_records SET br_returned_at = NOW(), br_status = '' WHERE borrow_id = $1 AND user_id = $2 RETURNING *`,
+    `UPDATE borrow_records SET br_returned_at = NOW() WHERE borrow_id = $1 AND user_id = $2 RETURNING *`,
     [borrow_id, user_id],
   );
 };

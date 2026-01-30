@@ -62,8 +62,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Try to refresh token to validate session
-        const response = await authService.refresh();
+        // Create a timeout promise that rejects after 5 seconds
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Auth check timeout")), 5000),
+        );
+
+        // Race between refresh and timeout
+        const response = (await Promise.race([
+          authService.refresh(),
+          timeoutPromise,
+        ])) as Awaited<ReturnType<typeof authService.refresh>>;
 
         // Use user data from response
         if (response.user) {

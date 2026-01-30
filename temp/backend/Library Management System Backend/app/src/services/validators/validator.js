@@ -135,6 +135,10 @@ export const isbnValidator = (isbn) => {
     throw new badReqError("ISBN is required.");
   }
 
+  if (isbn.length > 13) {
+    throw new badReqError("ISBN length exceeds the limit.");
+  }
+
   if (
     !/^(?:\d{9}[\dX]|\d{13})$/.test(isbn.replace(/-/g, "")) ||
     !(typeof isbn === "string")
@@ -176,7 +180,7 @@ export const roleCatNameValidator = (name) => {
     throw new badReqError("name length is invalid.");
   }
 
-  if (!/^[A-Za-z0-9 ]+$/.test(name)) {
+  if (!/^[A-Za-z0-9&\- ]+$/.test(name)) {
     throw new badReqError("name contains invalid characters.");
   }
 };
@@ -201,4 +205,4 @@ export const finePaidAmountValidator = (paid_amount) => {
   if (!Number.isInteger(paid_amount) || !(paid_amount >= 1)) {
     throw new badReqError("Paid amount must be positive integer.");
   }
-}
+};

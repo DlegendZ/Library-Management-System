@@ -28,7 +28,9 @@ export const borrowBook = async (user_id, book_id) => {
 
   const books_borrowed_count_result =
     await memberRepo.getMyBorrowBooksCount(user_id);
-  const books_borrowed_count = Number(books_borrowed_count_result.rows[0].count);
+  const books_borrowed_count = Number(
+    books_borrowed_count_result.rows[0].count,
+  );
 
   if (books_borrowed_count >= 3)
     throw new forbiddenRequest(

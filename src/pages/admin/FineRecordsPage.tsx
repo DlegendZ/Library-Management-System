@@ -150,35 +150,40 @@ const FineRecordsPage: React.FC = () => {
                 </TableCell>
               </TableRow>
             ) : (
-              records.map((record, index) => (
-                <TableRow key={record.fine_id || index}>
-                  <TableCell>{record.fine_id || 'N/A'}</TableCell>
-                  <TableCell className="font-medium">{record.u_full_name || 'N/A'}</TableCell>
-                  <TableCell>{record.b_title || 'N/A'}</TableCell>
-                  <TableCell>${record.fr_amount?.toFixed(2) || '0.00'}</TableCell>
-                  <TableCell>${record.fr_paid_amount?.toFixed(2) || '0.00'}</TableCell>
-                  <TableCell>
-                    <Badge variant={getStatusVariant(record.fr_status)}>
-                      {record.fr_status || 'N/A'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {record.fr_status !== 'paid' && record.fr_status !== 'waived' && record.borrow_id && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedRecord(record);
-                          setPayAmount('');
-                        }}
-                      >
-                        <DollarSign className="mr-1 h-4 w-4" />
-                        Pay
-                      </Button>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))
+              records.map((record, index) => {
+                const amount = Number(record.fr_amount) || 0;
+                const paidAmount = Number(record.fr_paid_amount) || 0;
+
+                return (
+                  <TableRow key={record.fine_id || index}>
+                    <TableCell>{record.fine_id || 'N/A'}</TableCell>
+                    <TableCell className="font-medium">{record.u_full_name || 'N/A'}</TableCell>
+                    <TableCell>{record.b_title || 'N/A'}</TableCell>
+                    <TableCell>${amount.toFixed(2)}</TableCell>
+                    <TableCell>${paidAmount.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={getStatusVariant(record.fr_status)}>
+                        {record.fr_status || 'N/A'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {record.fr_status !== 'paid' && record.fr_status !== 'waived' && record.borrow_id && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedRecord(record);
+                            setPayAmount('');
+                          }}
+                        >
+                          <DollarSign className="mr-1 h-4 w-4" />
+                          Pay
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -195,10 +200,10 @@ const FineRecordsPage: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="text-sm text-muted-foreground">
-              <p>Total Fine: ${selectedRecord?.fr_amount?.toFixed(2)}</p>
-              <p>Already Paid: ${selectedRecord?.fr_paid_amount?.toFixed(2)}</p>
+              <p>Total Fine: ${(Number(selectedRecord?.fr_amount) || 0).toFixed(2)}</p>
+              <p>Already Paid: ${(Number(selectedRecord?.fr_paid_amount) || 0).toFixed(2)}</p>
               <p className="font-medium text-foreground">
-                Remaining: ${((selectedRecord?.fr_amount || 0) - (selectedRecord?.fr_paid_amount || 0)).toFixed(2)}
+                Remaining: ${((Number(selectedRecord?.fr_amount) || 0) - (Number(selectedRecord?.fr_paid_amount) || 0)).toFixed(2)}
               </p>
             </div>
             <div className="space-y-2">
