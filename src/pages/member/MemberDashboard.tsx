@@ -14,29 +14,41 @@ const MemberDashboard: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [books, borrows, fines] = await Promise.all([
+        const [books, borrows, unpaidFines, partialFines] = await Promise.all([
           memberService.getBooks(),
           memberService.getMyBorrowHistory(),
           memberService.getMyFineRecords("unpaid"),
+          memberService.getMyFineRecords("partial"),
         ]);
 
         // Filter currently borrowed
         const currentBorrows =
           borrows?.filter((b) => b.br_status === "borrowed") || [];
 
-        // Calculate outstanding fines
-        const outstandingFines =
-          fines?.reduce((sum, record) => {
+        // Calculate outstanding fines for unpaid
+        const unpaidTotal =
+          unpaidFines?.reduce((sum, record) => {
             const amount = Number(record.fr_amount) || 0;
             const paidAmount = Number(record.fr_paid_amount) || 0;
             return sum + (amount - paidAmount);
           }, 0) || 0;
 
+        // Calculate outstanding fines for partial
+        const partialTotal =
+          partialFines?.reduce((sum, record) => {
+            const amount = Number(record.fr_amount) || 0;
+            const paidAmount = Number(record.fr_paid_amount) || 0;
+            return sum + (amount - paidAmount);
+          }, 0) || 0;
+
+        // Total outstanding fines
+        const totalOutstandingFines = unpaidTotal + partialTotal;
+
         setStats({
           availableBooks:
             books?.filter((b) => b.b_status === "available")?.length || 0,
           myBorrows: currentBorrows.length,
-          myFines: outstandingFines,
+          myFines: totalOutstandingFines,
         });
       } catch (error) {
         console.error("Failed to fetch stats:", error);

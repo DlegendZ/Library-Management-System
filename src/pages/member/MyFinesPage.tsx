@@ -23,6 +23,9 @@ import { Loader2, AlertCircle } from "lucide-react";
 
 const MyFinesPage: React.FC = () => {
   const [records, setRecords] = useState<FineRecord[]>([]);
+  const [allOutstandingFines, setAllOutstandingFines] = useState<FineRecord[]>(
+    [],
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("unpaid");
@@ -30,8 +33,14 @@ const MyFinesPage: React.FC = () => {
   const fetchRecords = async () => {
     try {
       setIsLoading(true);
-      const data = await memberService.getMyFineRecords(statusFilter);
-      setRecords(data);
+      const [filteredData, unpaidData, partialData] = await Promise.all([
+        memberService.getMyFineRecords(statusFilter),
+        memberService.getMyFineRecords("unpaid"),
+        memberService.getMyFineRecords("partial"),
+      ]);
+
+      setRecords(filteredData);
+      setAllOutstandingFines([...(unpaidData || []), ...(partialData || [])]);
       setError("");
     } catch (err) {
       setError(handleApiError(err));
@@ -59,14 +68,11 @@ const MyFinesPage: React.FC = () => {
     }
   };
 
-  // Calculate total outstanding
-  const totalOutstanding = records.reduce((sum, record) => {
-    if (record.fr_status === "unpaid" || record.fr_status === "partial") {
-      const amount = Number(record.fr_amount) || 0;
-      const paidAmount = Number(record.fr_paid_amount) || 0;
-      return sum + (amount - paidAmount);
-    }
-    return sum;
+  // Calculate total outstanding from all unpaid and partial fines
+  const totalOutstanding = allOutstandingFines.reduce((sum, record) => {
+    const amount = Number(record.fr_amount) || 0;
+    const paidAmount = Number(record.fr_paid_amount) || 0;
+    return sum + (amount - paidAmount);
   }, 0);
 
   if (isLoading) {
