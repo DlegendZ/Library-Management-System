@@ -107,11 +107,8 @@ This project was built to:
 ## 📂 Project Structure (Backend)
 
 ```
-src/
-├── controllers/
-├── services/
-├── repositories/
-├── routes/
+temp/backend/Library Management System Backend/app/
+├── src/
 ├── .env
 ├── database.js
 └── server.js
@@ -162,7 +159,7 @@ npm install
 
 ### 4️⃣ Setup Environment Variables
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root (Check the project structure stated above):
 
 ```env
 PORT=3000
@@ -200,6 +197,14 @@ Make sure you are in the folder :
 ```bash
 /temp/backend/Library Management System Backend/app
 ```
+
+```bash
+node server.js
+```
+
+If the loading, takes too long :
+
+Press `Ctrl + c` to stop the server. Re-run it again by:
 
 ```bash
 node server.js
