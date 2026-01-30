@@ -1,0 +1,7 @@
+{
+  "full_name": "System Administrator",
+  "email": "admin@library.com",
+  "password": "Admin@123"
+}
+
+// this is the admin account that has been inserted in the database
