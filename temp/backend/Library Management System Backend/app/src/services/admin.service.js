@@ -4,7 +4,7 @@ import argon2 from "argon2";
 
 class forbiddenRequest extends Error {
   constructor(message) {
-    super.message;
+    super(message);
     this.status = 403;
   }
 }
@@ -53,7 +53,11 @@ export const registerLibrarian = async (full_name, email, password) => {
   return getRowOrNull(result);
 };
 
-export const assignUserRoleOrStatusService = async (user_id, role_id, status) => {
+export const assignUserRoleOrStatusService = async (
+  user_id,
+  role_id,
+  status,
+) => {
   validator.idValidator(user_id);
   let result;
 
@@ -74,8 +78,7 @@ export const viewAllUsers = async (status) => {
   if (status) {
     validator.statusValidator(status);
     result = await adminRepo.getUserByStatus(status);
-  } 
-  else {
+  } else {
     result = await adminRepo.getAllUsers();
   }
 
@@ -98,14 +101,13 @@ export const viewAllCategories = async () => {
 };
 
 export const viewBorrowRecords = async (status) => {
-    let result;
-    if (status) {
-      validator.statusValidator(status);
-      result = await adminRepo.getBooksWithBorrowers(status);
-    }
-    else {
-      result = await adminRepo.getBorrowRecords();
-    }
+  let result;
+  if (status) {
+    validator.statusValidator(status);
+    result = await adminRepo.getBooksWithBorrowers(status);
+  } else {
+    result = await adminRepo.getBorrowRecords();
+  }
 
   return getRowOrNull(result);
 };
@@ -115,8 +117,7 @@ export const viewFineRecords = async (status) => {
   if (status) {
     validator.statusValidator(status);
     result = await adminRepo.getUsersWithFines(status);
-  }
-  else {
+  } else {
     result = await adminRepo.getFineRecords();
   }
 
@@ -189,10 +190,10 @@ export const updateBook = async (
 export const deleteBook = async (book_id) => {
   validator.idValidator(book_id);
 
-  const copies_result = await adminRepo.getBookInfo(book_id);
-  const { available_copies, total_copies } = copies_result.rows[0];
+  const borrows_result = await adminRepo.hasActiveBorrows(book_id);
+  const activeCount = Number(borrows_result.rows[0].count);
 
-  if (available_copies < total_copies)
+  if (activeCount > 0)
     throw new forbiddenRequest(
       "Book cannot be deleted because it is currently borrowed.",
     );

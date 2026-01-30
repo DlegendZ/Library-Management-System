@@ -101,7 +101,7 @@ const MyFinesPage: React.FC = () => {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            You have <strong>${totalOutstanding.toFixed(2)}</strong> in
+            You have <strong>Rp{totalOutstanding.toFixed(2)}</strong> in
             outstanding fines. Please visit the library to make a payment.
           </AlertDescription>
         </Alert>
@@ -146,10 +146,10 @@ const MyFinesPage: React.FC = () => {
                     <TableCell className="font-medium">
                       {record.b_title || "N/A"}
                     </TableCell>
-                    <TableCell>${amount.toFixed(2)}</TableCell>
-                    <TableCell>${paidAmount.toFixed(2)}</TableCell>
+                    <TableCell>Rp{amount.toFixed(2)}</TableCell>
+                    <TableCell>Rp{paidAmount.toFixed(2)}</TableCell>
                     <TableCell className="font-medium">
-                      ${remaining.toFixed(2)}
+                      Rp{remaining.toFixed(2)}
                     </TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(record.fr_status)}>

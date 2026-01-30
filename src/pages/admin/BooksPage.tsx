@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { adminService } from '@/services/admin.service';
-import type { Book, Category } from '@/types/api';
-import { handleApiError } from '@/lib/api';
+import React, { useEffect, useState } from "react";
+import { adminService } from "@/services/admin.service";
+import type { Book, Category } from "@/types/api";
+import { handleApiError } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -9,18 +9,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -28,31 +28,31 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, Plus, Pencil, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, Plus, Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 const BooksPage: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  
+  const [error, setError] = useState("");
+
   // Add/Edit dialog state
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingBook, setEditingBook] = useState<Book | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Form state
   const [formData, setFormData] = useState({
-    category_id: '',
-    isbn: '',
-    title: '',
-    author: '',
-    total_copies: '',
-    available_copies: '',
-    status: 'available' as 'available' | 'unavailable',
+    category_id: "",
+    isbn: "",
+    title: "",
+    author: "",
+    total_copies: "",
+    available_copies: "",
+    status: "available" as "available" | "unavailable",
   });
 
   const fetchData = async () => {
@@ -64,7 +64,7 @@ const BooksPage: React.FC = () => {
       ]);
       setBooks(booksData);
       setCategories(categoriesData);
-      setError('');
+      setError("");
     } catch (err) {
       setError(handleApiError(err));
     } finally {
@@ -78,13 +78,13 @@ const BooksPage: React.FC = () => {
 
   const resetForm = () => {
     setFormData({
-      category_id: '',
-      isbn: '',
-      title: '',
-      author: '',
-      total_copies: '',
-      available_copies: '',
-      status: 'available',
+      category_id: "",
+      isbn: "",
+      title: "",
+      author: "",
+      total_copies: "",
+      available_copies: "",
+      status: "available",
     });
     setEditingBook(null);
   };
@@ -125,12 +125,12 @@ const BooksPage: React.FC = () => {
           ...payload,
           status: formData.status,
         });
-        toast.success('Book updated successfully');
+        toast.success("Book updated successfully");
       } else {
         await adminService.addBook(payload);
-        toast.success('Book added successfully');
+        toast.success("Book added successfully");
       }
-      
+
       setDialogOpen(false);
       resetForm();
       fetchData();
@@ -142,11 +142,11 @@ const BooksPage: React.FC = () => {
   };
 
   const handleDelete = async (bookId: number) => {
-    if (!confirm('Are you sure you want to delete this book?')) return;
-    
+    if (!confirm("Are you sure you want to delete this book?")) return;
+
     try {
       await adminService.deleteBook(bookId);
-      toast.success('Book deleted successfully');
+      toast.success("Book deleted successfully");
       fetchData();
     } catch (err) {
       toast.error(handleApiError(err));
@@ -198,7 +198,10 @@ const BooksPage: React.FC = () => {
           <TableBody>
             {books.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={8}
+                  className="text-center text-muted-foreground"
+                >
                   No books found
                 </TableCell>
               </TableRow>
@@ -208,20 +211,36 @@ const BooksPage: React.FC = () => {
                   <TableCell>{book.book_id}</TableCell>
                   <TableCell className="font-medium">{book.b_title}</TableCell>
                   <TableCell>{book.b_author}</TableCell>
-                  <TableCell className="font-mono text-sm">{book.b_isbn}</TableCell>
-                  <TableCell>{book.c_name || 'N/A'}</TableCell>
-                  <TableCell>{book.b_available_copies}/{book.b_total_copies}</TableCell>
+                  <TableCell className="font-mono text-sm">
+                    {book.b_isbn}
+                  </TableCell>
+                  <TableCell>{book.c_name || "N/A"}</TableCell>
                   <TableCell>
-                    <Badge variant={book.b_status === 'available' ? 'default' : 'secondary'}>
+                    {book.b_available_copies}/{book.b_total_copies}
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={
+                        book.b_status === "available" ? "default" : "secondary"
+                      }
+                    >
                       {book.b_status}
                     </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon" onClick={() => handleOpenEdit(book)}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleOpenEdit(book)}
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="icon" onClick={() => handleDelete(book.book_id)}>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleDelete(book.book_id)}
+                      >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
@@ -237,21 +256,33 @@ const BooksPage: React.FC = () => {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>{editingBook ? 'Edit Book' : 'Add New Book'}</DialogTitle>
+            <DialogTitle>
+              {editingBook ? "Edit Book" : "Add New Book"}
+            </DialogTitle>
             <DialogDescription>
-              {editingBook ? 'Update book information' : 'Add a new book to the library'}
+              {editingBook
+                ? "Update book information"
+                : "Add a new book to the library"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select value={formData.category_id} onValueChange={(v) => setFormData({...formData, category_id: v})}>
+              <Select
+                value={formData.category_id}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, category_id: v })
+                }
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
-                    <SelectItem key={cat.category_id} value={cat.category_id.toString()}>
+                    <SelectItem
+                      key={cat.category_id}
+                      value={cat.category_id.toString()}
+                    >
                       {cat.c_name}
                     </SelectItem>
                   ))}
@@ -262,15 +293,19 @@ const BooksPage: React.FC = () => {
               <Label>ISBN</Label>
               <Input
                 value={formData.isbn}
-                onChange={(e) => setFormData({...formData, isbn: e.target.value})}
-                placeholder="978-0-123456-78-9"
+                onChange={(e) =>
+                  setFormData({ ...formData, isbn: e.target.value })
+                }
+                placeholder="1234567890123"
               />
             </div>
             <div className="space-y-2">
               <Label>Title</Label>
               <Input
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="Book title"
               />
             </div>
@@ -278,7 +313,9 @@ const BooksPage: React.FC = () => {
               <Label>Author</Label>
               <Input
                 value={formData.author}
-                onChange={(e) => setFormData({...formData, author: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, author: e.target.value })
+                }
                 placeholder="Author name (First Last)"
               />
             </div>
@@ -288,7 +325,9 @@ const BooksPage: React.FC = () => {
                 <Input
                   type="number"
                   value={formData.total_copies}
-                  onChange={(e) => setFormData({...formData, total_copies: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, total_copies: e.target.value })
+                  }
                   min="0"
                 />
               </div>
@@ -297,7 +336,12 @@ const BooksPage: React.FC = () => {
                 <Input
                   type="number"
                   value={formData.available_copies}
-                  onChange={(e) => setFormData({...formData, available_copies: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      available_copies: e.target.value,
+                    })
+                  }
                   min="0"
                 />
               </div>
@@ -305,7 +349,15 @@ const BooksPage: React.FC = () => {
             {editingBook && (
               <div className="space-y-2">
                 <Label>Status</Label>
-                <Select value={formData.status} onValueChange={(v) => setFormData({...formData, status: v as 'available' | 'unavailable'})}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(v) =>
+                    setFormData({
+                      ...formData,
+                      status: v as "available" | "unavailable",
+                    })
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -322,8 +374,10 @@ const BooksPage: React.FC = () => {
               Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {editingBook ? 'Update' : 'Add'} Book
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {editingBook ? "Update" : "Add"} Book
             </Button>
           </DialogFooter>
         </DialogContent>

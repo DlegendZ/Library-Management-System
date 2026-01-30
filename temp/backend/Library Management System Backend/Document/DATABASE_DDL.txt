@@ -31,7 +31,8 @@ CREATE TABLE books (
 	b_total_copies INT NOT NULL,
 	b_available_copies INT NOT NULL,
 	b_status VARCHAR(30) NOT NULL CHECK (b_status IN ('available', 'unavailable')) DEFAULT 'available',
-	b_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+	b_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	b_is_deleted BOOLEAN DEFAULT false
 );
 
 CREATE TABLE borrow_records (

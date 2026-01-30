@@ -7,7 +7,7 @@ export const registerMemberController = async (req, res) => {
     const result = await librarianService.registerMember(
       full_name,
       email,
-      password
+      password,
     );
     return res.status(201).json(result);
   } catch (err) {
@@ -30,6 +30,18 @@ export const viewAllMemberController = async (req, res) => {
   }
 };
 
+export const viewCategoriesController = async (req, res) => {
+  try {
+    const result = await librarianService.viewCategories();
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error("error :", err);
+    return res
+      .status(err.status || 500)
+      .json({ message: err.status ? err.message : "Internal Server Error" });
+  }
+};
+
 export const addBookController = async (req, res) => {
   const { category_id, isbn, title, author, total_copies, available_copies } =
     req.body;
@@ -41,11 +53,13 @@ export const addBookController = async (req, res) => {
       title,
       author,
       total_copies,
-      available_copies
+      available_copies,
     );
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
+    if (err.code === "23505")
+      return res.status(409).json({ message: "ISBN already exists" });
     return res
       .status(err.status || 500)
       .json({ message: err.status ? err.message : "Internal Server Error" });
@@ -74,7 +88,7 @@ export const updateBookController = async (req, res) => {
       author,
       total_copies,
       available_copies,
-      status
+      status,
     );
     return res.status(200).json(result);
   } catch (err) {

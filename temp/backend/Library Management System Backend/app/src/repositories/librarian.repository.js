@@ -4,12 +4,16 @@ export const insertMember = async (full_name, email, password_hash) => {
   return await query(
     `INSERT INTO users (role_id, u_full_name, u_email, u_password_hash) VALUES
         ($1,$2,$3,$4) RETURNING *`,
-    [3, full_name, email.toLowerCase(), password_hash]
+    [3, full_name, email.toLowerCase(), password_hash],
   );
 };
 
 export const getAllMembers = async () => {
   return await query(`SELECT * FROM users WHERE role_id = 3`);
+};
+
+export const getCategories = async () => {
+  return await query(`SELECT * FROM categories`);
 };
 
 export const insertBook = async (
@@ -18,14 +22,14 @@ export const insertBook = async (
   title,
   author,
   total_copies,
-  available_copies
+  available_copies,
 ) => {
   return await query(
     `INSERT INTO books 
         (category_id, b_isbn, b_title, b_author, b_total_copies, b_available_copies)
         VALUES
         ($1, $2, $3, $4, $5, $6) RETURNING *`,
-    [category_id, isbn, title, author, total_copies, available_copies]
+    [category_id, isbn, title, author, total_copies, available_copies],
   );
 };
 
@@ -37,7 +41,7 @@ export const updateBook = async (
   author,
   total_copies,
   available_copies,
-  status
+  status,
 ) => {
   return await query(
     `UPDATE books SET 
@@ -58,24 +62,24 @@ export const updateBook = async (
       available_copies,
       status,
       book_id,
-    ]
+    ],
   );
 };
 
 export const getBorrowRecords = async () => {
   return await query(
-    `SELECT * FROM users u LEFT JOIN borrow_records br 
-        ON u.user_id = br.user_id RIGHT JOIN books b
-        ON b.book_id = br.book_id`
+    `SELECT * FROM users u JOIN borrow_records br 
+        ON u.user_id = br.user_id JOIN books b
+        ON b.book_id = br.book_id`,
   );
 };
 
 export const getFineRecords = async () => {
   return await query(
-    `SELECT * FROM fine_records fr RIGHT JOIN borrow_records br 
-        ON fr.borrow_id = br.borrow_id RIGHT JOIN users u 
-        ON br.user_id = u.user_id RIGHT JOIN books b
-        ON b.book_id = br.book_id`
+    `SELECT * FROM fine_records fr JOIN borrow_records br 
+        ON fr.borrow_id = br.borrow_id JOIN users u 
+        ON br.user_id = u.user_id JOIN books b
+        ON b.book_id = br.book_id`,
   );
 };
 

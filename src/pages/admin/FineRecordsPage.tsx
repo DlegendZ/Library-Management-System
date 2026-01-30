@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { adminService } from '@/services/admin.service';
-import type { FineRecord } from '@/types/api';
-import { handleApiError } from '@/lib/api';
+import React, { useEffect, useState } from "react";
+import { adminService } from "@/services/admin.service";
+import type { FineRecord } from "@/types/api";
+import { handleApiError } from "@/lib/api";
 import {
   Table,
   TableBody,
@@ -9,18 +9,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -28,28 +28,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, DollarSign } from 'lucide-react';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, DollarSign } from "lucide-react";
+import { toast } from "sonner";
 
 const FineRecordsPage: React.FC = () => {
   const [records, setRecords] = useState<FineRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  
+  const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
   // Pay fine dialog
   const [selectedRecord, setSelectedRecord] = useState<FineRecord | null>(null);
-  const [payAmount, setPayAmount] = useState('');
+  const [payAmount, setPayAmount] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchRecords = async () => {
     try {
       setIsLoading(true);
-      const data = await adminService.getFineRecords(statusFilter === 'all' ? undefined : statusFilter);
+      const data = await adminService.getFineRecords(
+        statusFilter === "all" ? undefined : statusFilter,
+      );
       setRecords(data);
-      setError('');
+      setError("");
     } catch (err) {
       setError(handleApiError(err));
     } finally {
@@ -63,13 +65,15 @@ const FineRecordsPage: React.FC = () => {
 
   const handlePayFine = async () => {
     if (!selectedRecord) return;
-    
+
     setIsSubmitting(true);
     try {
-      await adminService.payFine(selectedRecord.borrow_id, { amount: parseFloat(payAmount) });
-      toast.success('Fine payment recorded');
+      await adminService.payFine(selectedRecord.borrow_id, {
+        amount: parseFloat(payAmount),
+      });
+      toast.success("Fine payment recorded");
       setSelectedRecord(null);
-      setPayAmount('');
+      setPayAmount("");
       fetchRecords();
     } catch (err) {
       toast.error(handleApiError(err));
@@ -80,16 +84,16 @@ const FineRecordsPage: React.FC = () => {
 
   const getStatusVariant = (status: string) => {
     switch (status) {
-      case 'paid':
-        return 'default';
-      case 'partial':
-        return 'secondary';
-      case 'unpaid':
-        return 'destructive';
-      case 'waived':
-        return 'outline';
+      case "paid":
+        return "default";
+      case "partial":
+        return "secondary";
+      case "unpaid":
+        return "destructive";
+      case "waived":
+        return "outline";
       default:
-        return 'outline';
+        return "outline";
     }
   };
 
@@ -145,7 +149,10 @@ const FineRecordsPage: React.FC = () => {
           <TableBody>
             {records.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="text-center text-muted-foreground"
+                >
                   No fine records found
                 </TableCell>
               </TableRow>
@@ -156,30 +163,34 @@ const FineRecordsPage: React.FC = () => {
 
                 return (
                   <TableRow key={record.fine_id || index}>
-                    <TableCell>{record.fine_id || 'N/A'}</TableCell>
-                    <TableCell className="font-medium">{record.u_full_name || 'N/A'}</TableCell>
-                    <TableCell>{record.b_title || 'N/A'}</TableCell>
-                    <TableCell>${amount.toFixed(2)}</TableCell>
-                    <TableCell>${paidAmount.toFixed(2)}</TableCell>
+                    <TableCell>{record.fine_id || "N/A"}</TableCell>
+                    <TableCell className="font-medium">
+                      {record.u_full_name || "N/A"}
+                    </TableCell>
+                    <TableCell>{record.b_title || "N/A"}</TableCell>
+                    <TableCell>Rp{amount.toFixed(2)}</TableCell>
+                    <TableCell>Rp{paidAmount.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge variant={getStatusVariant(record.fr_status)}>
-                        {record.fr_status || 'N/A'}
+                        {record.fr_status || "N/A"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      {record.fr_status !== 'paid' && record.fr_status !== 'waived' && record.borrow_id && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setSelectedRecord(record);
-                            setPayAmount('');
-                          }}
-                        >
-                          <DollarSign className="mr-1 h-4 w-4" />
-                          Pay
-                        </Button>
-                      )}
+                      {record.fr_status !== "paid" &&
+                        record.fr_status !== "waived" &&
+                        record.borrow_id && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedRecord(record);
+                              setPayAmount("");
+                            }}
+                          >
+                            <DollarSign className="mr-1 h-4 w-4" />
+                            Pay
+                          </Button>
+                        )}
                     </TableCell>
                   </TableRow>
                 );
@@ -190,7 +201,10 @@ const FineRecordsPage: React.FC = () => {
       </div>
 
       {/* Pay Fine Dialog */}
-      <Dialog open={!!selectedRecord} onOpenChange={() => setSelectedRecord(null)}>
+      <Dialog
+        open={!!selectedRecord}
+        onOpenChange={() => setSelectedRecord(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Record Fine Payment</DialogTitle>
@@ -200,10 +214,20 @@ const FineRecordsPage: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="text-sm text-muted-foreground">
-              <p>Total Fine: ${(Number(selectedRecord?.fr_amount) || 0).toFixed(2)}</p>
-              <p>Already Paid: ${(Number(selectedRecord?.fr_paid_amount) || 0).toFixed(2)}</p>
+              <p>
+                Total Fine: Rp
+                {(Number(selectedRecord?.fr_amount) || 0).toFixed(2)}
+              </p>
+              <p>
+                Already Paid: Rp
+                {(Number(selectedRecord?.fr_paid_amount) || 0).toFixed(2)}
+              </p>
               <p className="font-medium text-foreground">
-                Remaining: ${((Number(selectedRecord?.fr_amount) || 0) - (Number(selectedRecord?.fr_paid_amount) || 0)).toFixed(2)}
+                Remaining: Rp
+                {(
+                  (Number(selectedRecord?.fr_amount) || 0) -
+                  (Number(selectedRecord?.fr_paid_amount) || 0)
+                ).toFixed(2)}
               </p>
             </div>
             <div className="space-y-2">
@@ -222,8 +246,13 @@ const FineRecordsPage: React.FC = () => {
             <Button variant="outline" onClick={() => setSelectedRecord(null)}>
               Cancel
             </Button>
-            <Button onClick={handlePayFine} disabled={isSubmitting || !payAmount}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            <Button
+              onClick={handlePayFine}
+              disabled={isSubmitting || !payAmount}
+            >
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Record Payment
             </Button>
           </DialogFooter>

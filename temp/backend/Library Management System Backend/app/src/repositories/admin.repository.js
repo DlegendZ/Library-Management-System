@@ -56,17 +56,17 @@ export const getCategories = async () => {
 
 export const getBorrowRecords = async () => {
   return await query(
-    `SELECT * FROM users u LEFT JOIN borrow_records br 
-        ON u.user_id = br.user_id RIGHT JOIN books b
+    `SELECT * FROM users u JOIN borrow_records br 
+        ON u.user_id = br.user_id JOIN books b
         ON b.book_id = br.book_id`,
   );
 };
 
 export const getFineRecords = async () => {
   return await query(
-    `SELECT * FROM fine_records fr RIGHT JOIN borrow_records br 
-        ON fr.borrow_id = br.borrow_id RIGHT JOIN users u 
-        ON br.user_id = u.user_id RIGHT JOIN books b
+    `SELECT * FROM fine_records fr JOIN borrow_records br 
+        ON fr.borrow_id = br.borrow_id JOIN users u 
+        ON br.user_id = u.user_id JOIN books b
         ON b.book_id = br.book_id`,
   );
 };
@@ -85,8 +85,8 @@ export const getMemberBorrowHistory = async (user_id) => {
 export const getBooksWithBorrowers = async (status) => {
   return await query(
     `SELECT * FROM 
-        books b LEFT JOIN borrow_records br 
-        ON b.book_id = br.book_id RIGHT JOIN
+        books b JOIN borrow_records br 
+        ON b.book_id = br.book_id JOIN
         users u ON u.user_id = br.user_id
         WHERE br.br_status = $1`,
     [status],
@@ -96,9 +96,10 @@ export const getBooksWithBorrowers = async (status) => {
 export const getUsersWithFines = async (status) => {
   return await query(
     `SELECT * FROM 
-        fine_records fr RIGHT JOIN borrow_records br 
-        ON fr.borrow_id = br.borrow_id LEFT JOIN
-        users u ON u.user_id = br.user_id
+        fine_records fr JOIN borrow_records br 
+        ON fr.borrow_id = br.borrow_id JOIN
+        users u ON u.user_id = br.user_id JOIN books b
+        ON b.book_id = br.book_id
         WHERE fr.fr_status = $1`,
     [status],
   );
@@ -158,17 +159,18 @@ export const updateBook = async (
   );
 };
 
-export const getBookInfo = async (book_id) => {
+export const hasActiveBorrows = async (book_id) => {
   return await query(
-    `SELECT b_available_copies, b_total_copies FROM books WHERE book_id = $1`,
+    `SELECT COUNT(*) as count FROM borrow_records WHERE book_id = $1 AND br_status = 'borrowed'`,
     [book_id],
   );
 };
 
 export const deleteBook = async (book_id) => {
-  return await query(`DELETE FROM books WHERE book_id = $1 RETURNING *`, [
-    book_id,
-  ]);
+  return await query(
+    `UPDATE books SET b_is_deleted = true WHERE book_id = $1 RETURNING *`,
+    [book_id],
+  );
 };
 
 export const insertCategory = async (name, description) => {

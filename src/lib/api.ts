@@ -31,11 +31,12 @@ api.interceptors.response.use(
     };
 
     // If 401 and not already retrying, try to refresh
-    // But don't refresh if this is already a refresh request
+    // But don't refresh if this is a login request or already a refresh request
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url?.includes("/auth/refresh")
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/login")
     ) {
       originalRequest._retry = true;
 
@@ -55,11 +56,14 @@ api.interceptors.response.use(
 export const handleApiError = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<ApiError>;
-    return (
-      axiosError.response?.data?.message ||
-      axiosError.message ||
-      "An error occurred"
-    );
+
+    // Try to get message from response data first
+    if (axiosError.response?.data?.message) {
+      return axiosError.response.data.message;
+    }
+
+    // Fallback to error message or generic message
+    return axiosError.message || "An error occurred";
   }
   return "An unexpected error occurred";
 };

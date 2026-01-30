@@ -25,7 +25,7 @@ export const registerMember = async (full_name, email, password) => {
   const result = await librarianRepo.insertMember(
     full_name,
     email,
-    password_hash
+    password_hash,
   );
   return getRowOrNull(result);
 };
@@ -35,13 +35,18 @@ export const viewAllMembers = async () => {
   return getRowOrNull(result);
 };
 
+export const viewCategories = async () => {
+  const result = await librarianRepo.getCategories();
+  return getRowOrNull(result);
+};
+
 export const addBook = async (
   category_id,
   isbn,
   title,
   author,
   total_copies,
-  available_copies
+  available_copies,
 ) => {
   validator.idValidator(category_id);
   validator.isbnValidator(isbn);
@@ -56,7 +61,7 @@ export const addBook = async (
     title,
     author,
     total_copies,
-    available_copies
+    available_copies,
   );
   return getRowOrNull(result);
 };
@@ -69,7 +74,7 @@ export const updateBook = async (
   author,
   total_copies,
   available_copies,
-  status
+  status,
 ) => {
   validator.idValidator(book_id);
   validator.idValidator(category_id);
@@ -88,7 +93,7 @@ export const updateBook = async (
     author,
     total_copies,
     available_copies,
-    status
+    status,
   );
   return getRowOrNull(result);
 };
@@ -109,4 +114,4 @@ export const memberPayFinesService = async (borrow_id, amount) => {
 
   const result = await librarianRepo.memberPayFinesRepo(borrow_id, amount);
   return getRowOrNull(result);
-}
+};

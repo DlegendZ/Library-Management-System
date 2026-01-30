@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { memberService } from '@/services/member.service';
-import { BookOpen, FileText, DollarSign, Loader2 } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { memberService } from "@/services/member.service";
+import { BookOpen, FileText, DollarSign, Loader2 } from "lucide-react";
 
 const MemberDashboard: React.FC = () => {
   const [stats, setStats] = useState({
@@ -14,21 +14,32 @@ const MemberDashboard: React.FC = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [books, borrows] = await Promise.all([
+        const [books, borrows, fines] = await Promise.all([
           memberService.getBooks(),
           memberService.getMyBorrowHistory(),
+          memberService.getMyFineRecords("unpaid"),
         ]);
 
         // Filter currently borrowed
-        const currentBorrows = borrows?.filter(b => b.br_status === 'borrowed') || [];
+        const currentBorrows =
+          borrows?.filter((b) => b.br_status === "borrowed") || [];
+
+        // Calculate outstanding fines
+        const outstandingFines =
+          fines?.reduce((sum, record) => {
+            const amount = Number(record.fr_amount) || 0;
+            const paidAmount = Number(record.fr_paid_amount) || 0;
+            return sum + (amount - paidAmount);
+          }, 0) || 0;
 
         setStats({
-          availableBooks: books?.filter(b => b.b_status === 'available')?.length || 0,
+          availableBooks:
+            books?.filter((b) => b.b_status === "available")?.length || 0,
           myBorrows: currentBorrows.length,
-          myFines: 0, // Will be fetched separately if needed
+          myFines: outstandingFines,
         });
       } catch (error) {
-        console.error('Failed to fetch stats:', error);
+        console.error("Failed to fetch stats:", error);
       } finally {
         setIsLoading(false);
       }
@@ -49,13 +60,17 @@ const MemberDashboard: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Member Dashboard</h1>
-        <p className="text-muted-foreground">Browse and borrow books from the library</p>
+        <p className="text-muted-foreground">
+          Browse and borrow books from the library
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Available Books</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Available Books
+            </CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -65,7 +80,9 @@ const MemberDashboard: React.FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Currently Borrowed</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Currently Borrowed
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -76,7 +93,9 @@ const MemberDashboard: React.FC = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding Fines</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Outstanding Fines
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>

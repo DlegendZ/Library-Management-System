@@ -40,8 +40,8 @@ export const getBooksByAuthor = async (author) => {
 export const getMyBorrowHistory = async (user_id) => {
   return await query(
     `SELECT * FROM 
-        users u LEFT JOIN borrow_records br 
-        ON u.user_id = br.user_id RIGHT JOIN books b
+        users u JOIN borrow_records br 
+        ON u.user_id = br.user_id LEFT JOIN books b
         ON br.book_id = b.book_id
         WHERE u.role_id = 3 AND u.user_id = $1`,
     [user_id],

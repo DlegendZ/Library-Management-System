@@ -57,9 +57,6 @@ export async function revokeRefreshToken(id) {
 }
 
 export const loginService = async (email, password, req) => {
-  validator.emailValidator(email);
-  validator.passwordValidator(password);
-
   const userRes = await authRepo.getUserByEmail(email);
   const user = userRes.rows[0];
 

@@ -35,9 +35,13 @@ export const registerLibrarianController = async (req, res) => {
 export const assignUserRoleOrStatusController = async (req, res) => {
   const { user_id } = req.params;
   const { role_id, status } = req.body;
-  
+
   try {
-    const result = await adminService.assignUserRoleOrStatusService(user_id, role_id, status);
+    const result = await adminService.assignUserRoleOrStatusService(
+      user_id,
+      role_id,
+      status,
+    );
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
@@ -204,7 +208,7 @@ export const deleteBookController = async (req, res) => {
     console.error("error :", err);
     return res
       .status(err.status || 500)
-      .json({ message: err.status ? err.message : "Internal Server Error" });
+      .json({ message: err.message || "Internal Server Error" });
   }
 };
 
@@ -248,10 +252,7 @@ export const memberPayFinesController = async (req, res) => {
   const { amount } = req.body;
 
   try {
-    const result = await adminService.memberPayFinesService(
-      borrow_id,
-      amount,
-    );
+    const result = await adminService.memberPayFinesService(borrow_id, amount);
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);

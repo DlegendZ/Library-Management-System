@@ -1,45 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { librarianService } from '@/services/librarian.service';
-import { adminService } from '@/services/admin.service';
-import type { Category } from '@/types/api';
-import { handleApiError } from '@/lib/api';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import React, { useEffect, useState } from "react";
+import { librarianService } from "@/services/librarian.service";
+import type { Category } from "@/types/api";
+import { handleApiError } from "@/lib/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, AlertCircle, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, AlertCircle, BookOpen } from "lucide-react";
+import { toast } from "sonner";
 
 const AddBookPage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
-    category_id: '',
-    isbn: '',
-    title: '',
-    author: '',
-    total_copies: '',
-    available_copies: '',
+    category_id: "",
+    isbn: "",
+    title: "",
+    author: "",
+    total_copies: "",
+    available_copies: "",
   });
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        // Use admin service to get categories (librarians can view)
-        const data = await adminService.getCategories();
+        // Use librarian service to get categories
+        const data = await librarianService.getCategories();
         setCategories(data);
       } catch (err) {
-        console.error('Failed to fetch categories:', err);
+        console.error("Failed to fetch categories:", err);
       } finally {
         setIsFetching(false);
       }
@@ -50,7 +55,7 @@ const AddBookPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setIsLoading(true);
 
     try {
@@ -62,14 +67,14 @@ const AddBookPage: React.FC = () => {
         total_copies: parseInt(formData.total_copies),
         available_copies: parseInt(formData.available_copies),
       });
-      toast.success('Book added successfully');
+      toast.success("Book added successfully");
       setFormData({
-        category_id: '',
-        isbn: '',
-        title: '',
-        author: '',
-        total_copies: '',
-        available_copies: '',
+        category_id: "",
+        isbn: "",
+        title: "",
+        author: "",
+        total_copies: "",
+        available_copies: "",
       });
     } catch (err) {
       setError(handleApiError(err));
@@ -109,16 +114,21 @@ const AddBookPage: React.FC = () => {
 
             <div className="space-y-2">
               <Label>Category</Label>
-              <Select 
-                value={formData.category_id} 
-                onValueChange={(v) => setFormData({...formData, category_id: v})}
+              <Select
+                value={formData.category_id}
+                onValueChange={(v) =>
+                  setFormData({ ...formData, category_id: v })
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (
-                    <SelectItem key={cat.category_id} value={cat.category_id.toString()}>
+                    <SelectItem
+                      key={cat.category_id}
+                      value={cat.category_id.toString()}
+                    >
                       {cat.c_name}
                     </SelectItem>
                   ))}
@@ -131,8 +141,10 @@ const AddBookPage: React.FC = () => {
               <Input
                 id="isbn"
                 value={formData.isbn}
-                onChange={(e) => setFormData({...formData, isbn: e.target.value})}
-                placeholder="978-0-123456-78-9"
+                onChange={(e) =>
+                  setFormData({ ...formData, isbn: e.target.value })
+                }
+                placeholder="1234567890123"
                 required
               />
             </div>
@@ -142,7 +154,9 @@ const AddBookPage: React.FC = () => {
               <Input
                 id="title"
                 value={formData.title}
-                onChange={(e) => setFormData({...formData, title: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
                 placeholder="Book title"
                 required
               />
@@ -153,11 +167,15 @@ const AddBookPage: React.FC = () => {
               <Input
                 id="author"
                 value={formData.author}
-                onChange={(e) => setFormData({...formData, author: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, author: e.target.value })
+                }
                 placeholder="Author name (First Last)"
                 required
               />
-              <p className="text-xs text-muted-foreground">Must contain at least two words</p>
+              <p className="text-xs text-muted-foreground">
+                Must contain at least two words
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -167,7 +185,9 @@ const AddBookPage: React.FC = () => {
                   id="total_copies"
                   type="number"
                   value={formData.total_copies}
-                  onChange={(e) => setFormData({...formData, total_copies: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, total_copies: e.target.value })
+                  }
                   min="1"
                   required
                 />
@@ -178,7 +198,12 @@ const AddBookPage: React.FC = () => {
                   id="available_copies"
                   type="number"
                   value={formData.available_copies}
-                  onChange={(e) => setFormData({...formData, available_copies: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      available_copies: e.target.value,
+                    })
+                  }
                   min="0"
                   required
                 />

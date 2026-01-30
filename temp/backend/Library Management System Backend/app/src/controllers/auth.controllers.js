@@ -41,7 +41,10 @@ export const loginController = async (req, res) => {
     });
   } catch (err) {
     console.error("error :", err);
-    if (err.status || err.message === "User not found") {
+    if (
+      err.message === "User not found" ||
+      err.message === "Password not found"
+    ) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
     return res.status(500).json({ message: "Internal Server Error" });
