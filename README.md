@@ -142,6 +142,18 @@ cd <your-project-name>
 
 Do install dependencies for the frontend and backend by:
 
+Frontend:
+
+```bash
+/Library-Management-System
+```
+
+Backend:
+
+```bash
+/temp/backend/Library Management System
+```
+
 ```bash
 npm install
 ```
@@ -158,24 +170,36 @@ DATABASE_URL=postgresql://user:password@localhost:5432/lms
 JWT_SECRET=your_jwt_secret
 ```
 
+If you follow DATABASE_DDL.txt, then DATABASE_URL must be filled like this :
+
+```env
+DATABASE_URL = postgresql://lms_admin:1234567@localhost:5432/lms_db
+```
+
+The JWT_SECRET can be gained randomly by:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(128).toString('hex'))"
+```
+
 ---
 
 ### 5️⃣ Setup Database
 
-* Create the database
-* Run the provided SQL schema / migrations from DATABASE_DDL.txt provided
-* Ensure tables:
-
-  * users
-  * roles
-  * books
-  * categories
-  * borrow_records
-  * fine_records
+* Create the database and name it as lms_db
+* Import the lms_db.sql to the database
+* Database structure will be ready to use with first admin account created
+* The admin account's email and password can be checked in acc.txt
 
 ---
 
 ### 6️⃣ Start the Backend
+
+Make sure you are in the folder :
+
+```bash
+/temp/backend/Library Management System/app
+```
 
 ```bash
 node server.js
@@ -190,6 +214,12 @@ http://localhost:3000
 ---
 
 ### 7️⃣ Run the Frontend
+
+Make sure you are in the folder :
+
+```bash
+/Library-Management-System
+```
 
 ```bash
 npm run dev
