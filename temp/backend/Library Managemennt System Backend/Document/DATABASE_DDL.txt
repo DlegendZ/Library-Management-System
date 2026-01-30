@@ -1,0 +1,163 @@
+CREATE TABLE roles (
+	role_id SERIAL PRIMARY KEY,
+	r_name VARCHAR(30) UNIQUE NOT NULL,
+	r_description TEXT NOT NULL
+);
+
+CREATE TABLE users (
+	user_id SERIAL PRIMARY KEY,
+	role_id INT NOT NULL,
+	FOREIGN KEY (role_id) REFERENCES roles(role_id),
+	u_full_name VARCHAR(255) NOT NULL,
+	u_email VARCHAR(255) UNIQUE NOT NULL,
+	u_password_hash VARCHAR(255) NOT NULL,
+	u_status VARCHAR(20) NOT NULL CHECK (u_status IN ('active', 'suspended')) DEFAULT 'active',
+	u_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE categories (
+	category_id SERIAL PRIMARY KEY,
+	c_name VARCHAR(50) UNIQUE NOT NULL,
+	c_description TEXT NOT NULL
+);
+
+CREATE TABLE books (
+	book_id SERIAL PRIMARY KEY,
+	category_id INT NOT NULL,
+	FOREIGN KEY (category_id) REFERENCES categories(category_id),
+	b_isbn CHAR(13) UNIQUE NOT NULL,
+	b_title VARCHAR(255) NOT NULL,
+	b_author VARCHAR(255) NOT NULL,
+	b_total_copies INT NOT NULL,
+	b_available_copies INT NOT NULL,
+	b_status VARCHAR(30) NOT NULL CHECK (b_status IN ('available', 'unavailable')) DEFAULT 'available',
+	b_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE borrow_records (
+	borrow_id SERIAL PRIMARY KEY,
+	user_id INT NOT NULL,
+	FOREIGN KEY (user_id) REFERENCES users(user_id),
+	book_id INT NOT NULL,
+	FOREIGN KEY (book_id) REFERENCES books(book_Id),
+	br_borrowed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	br_due_at TIMESTAMP NOT NULL,
+	br_returned_at TIMESTAMP,
+	br_status VARCHAR(30) NOT NULL CHECK (br_status IN ('borrowed', 'returned', 'overdue')) DEFAULT 'borrowed'
+);
+
+CREATE TABLE fine_records (
+	fine_id SERIAL PRIMARY KEY,
+	borrow_id INT NOT NULL,
+	FOREIGN KEY (borrow_id) REFERENCES borrow_records(borrow_id),
+	fr_amount NUMERIC(10,2) NOT NULL,
+	fr_paid_amount NUMERIC(10,2) NOT NULL,
+	fr_status VARCHAR(20) NOT NULL CHECK (fr_status IN ('unpaid', 'partial', 'paid', 'waived')),
+	fr_paid_at TIMESTAMP
+);
+
+CREATE TABLE refresh_tokens (
+  id UUID PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+
+  token_hash TEXT NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  expires_at TIMESTAMP NOT NULL,
+
+  revoked_at TIMESTAMP,
+
+  ip TEXT,
+  user_agent TEXT
+);
+
+CREATE INDEX refresh_tokens_user_id_idx ON refresh_tokens(user_id);
+CREATE INDEX refresh_tokens_expires_at_idx ON refresh_tokens(expires_at);
+
+CREATE USER lms_admin WITH PASSWORD '1234567';
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO lms_admin;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO lms_admin;
+
+INSERT INTO roles (r_name, r_description) 
+VALUES 
+('admin', 'manages users, books, rules, and full system access'),
+('librarian', 'handles book operations and member borrowing'),
+('member', 'searches, borrows, and returns books');
+
+CREATE FUNCTION returning_book_fn()
+RETURNS TRIGGER AS $$
+DECLARE late_day INT; 
+BEGIN 
+	IF OLD.br_due_at < NEW.br_returned_at THEN
+		late_day := DATE_PART('day', NEW.br_returned_at - OLD.br_due_at);
+		
+		INSERT INTO fine_records(borrow_id, fr_amount, fr_paid_amount, fr_status) VALUES
+		(OLD.borrow_id, (late_day * 10000) + 10000, 0, 'unpaid');
+
+		NEW.br_status := 'overdue';
+	ELSE 
+		NEW.br_status := 'returned';
+	END IF;
+
+	UPDATE books SET b_available_copies = b_available_copies + 1 WHERE book_id = OLD.book_id;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER returning_book_tg
+BEFORE UPDATE ON borrow_records
+FOR EACH ROW 
+WHEN (OLD.br_returned_at IS NULL AND NEW.br_returned_at IS NOT NULL)
+EXECUTE FUNCTION returning_book_fn();
+
+CREATE FUNCTION book_availability_fn()
+RETURNS TRIGGER AS $$
+BEGIN 
+	IF NEW.b_available_copies = 0 THEN 
+		NEW.b_status := 'unavailable';
+	ELSE 
+		NEW.b_status := 'available';
+	END IF;
+	
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER book_availability_tg
+BEFORE UPDATE ON books
+FOR EACH ROW
+WHEN (OLD.b_available_copies <> NEW.b_available_copies)
+EXECUTE FUNCTION book_availability_fn();
+
+CREATE FUNCTION borrow_book_fn()
+RETURNS TRIGGER AS $$
+BEGIN
+	UPDATE books SET b_available_copies = b_available_copies - 1 WHERE book_id = NEW.book_id;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER borrow_book_tg
+AFTER INSERT ON borrow_records
+FOR EACH ROW
+EXECUTE FUNCTION borrow_book_fn();
+
+CREATE FUNCTION fine_payment_fn()
+RETURNS TRIGGER AS $$
+BEGIN
+	IF OLD.fr_amount > NEW.fr_paid_amount THEN 
+		NEW.fr_status := 'partial';
+	ELSE 
+		NEW.fr_STATUS := 'paid';
+		NEW.fr_paid_at := NOW();
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE PLPGSQL;
+
+CREATE TRIGGER fine_payment_tg
+BEFORE UPDATE ON fine_records
+FOR EACH ROW
+WHEN (OLD.fr_paid_amount <> NEW.fr_paid_amount)
+EXECUTE FUNCTION fine_payment_fn();

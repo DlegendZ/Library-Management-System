@@ -140,6 +140,8 @@ cd <your-project-name>
 
 ### 3️⃣ Install Dependencies
 
+Do install dependencies for the frontend and backend by:
+
 ```bash
 npm install
 ```
