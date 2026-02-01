@@ -12,6 +12,8 @@ export const registerMemberController = async (req, res) => {
     return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
+    if (err.code === "23505")
+      return res.status(409).json({ message: "Email already exists" });
     return res
       .status(err.status || 500)
       .json({ message: err.status ? err.message : "Internal Server Error" });

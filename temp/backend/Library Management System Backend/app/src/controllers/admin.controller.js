@@ -8,6 +8,8 @@ export const registerAdminController = async (req, res) => {
     return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
+    if (err.code === "23505")
+      return res.status(409).json({ message: "Email already exists" });
     return res
       .status(err.status || 500)
       .json({ message: err.status ? err.message : "Internal Server Error" });
@@ -26,6 +28,8 @@ export const registerLibrarianController = async (req, res) => {
     return res.status(201).json(result);
   } catch (err) {
     console.error("error :", err);
+    if (err.code === "23505")
+      return res.status(409).json({ message: "Email already exists" });
     return res
       .status(err.status || 500)
       .json({ message: err.status ? err.message : "Internal Server Error" });
@@ -222,6 +226,8 @@ export const addCategoryController = async (req, res) => {
     return res.status(200).json(result);
   } catch (err) {
     console.error("error :", err);
+    if (err.code === "23505")
+      return res.status(409).json({ message: "Category already exists" });
     return res
       .status(err.status || 500)
       .json({ message: err.status ? err.message : "Internal Server Error" });
