@@ -1,11 +1,11 @@
-# 📚 Library Management System (LMS)
+# Library Management System (LMS)
 
 A **web-based Library Management System** built with a **Node.js RESTful backend** and a **modern frontend**.
 This system manages **books, users, borrowing, returning, fines, and roles** following real-world library rules.
 
 ---
 
-## 🎯 Project Purpose
+## Project Purpose
 
 This project was built to:
 
@@ -16,9 +16,9 @@ This project was built to:
 
 ---
 
-## 🧩 System Overview
+## System Overview
 
-### 👥 User Roles
+### User Roles
 
 * **Admin**
 
@@ -35,7 +35,7 @@ This project was built to:
 
 ---
 
-## 🛠 Tech Stack
+## Tech Stack
 
 ### Backend
 
@@ -55,7 +55,7 @@ This project was built to:
 
 ---
 
-## 🔐 Authentication & Security
+## Authentication & Security
 
 * JWT-based authentication
 * httpOnly cookies for access tokens
@@ -65,28 +65,28 @@ This project was built to:
 
 ---
 
-## 📦 Core Features
+## Core Features
 
-### 👤 User Management
+### User Management
 
 * Login / Logout
 * Role assignment
 * Account suspension
 
-### 📚 Book Management
+### Book Management
 
 * Add / update / delete books
 * Categories
 * Availability tracking
 
-### 🔄 Borrowing System
+### Borrowing System
 
 * Borrow limit enforcement
 * Due date calculation
 * Prevent duplicate borrowing
 * Status tracking
 
-### 💰 Fine System
+### Fine System
 
 * Late return fines
 * Fine accumulation
@@ -94,7 +94,7 @@ This project was built to:
 
 ---
 
-## 🌐 API Design Principles
+## API Design Principles
 
 * RESTful endpoints
 * Meaningful HTTP status codes
@@ -104,7 +104,7 @@ This project was built to:
 
 ---
 
-## 📂 Project Structure (Backend)
+## Project Structure (Backend)
 
 ```
 temp/backend/Library Management System Backend/app/
@@ -116,9 +116,9 @@ temp/backend/Library Management System Backend/app/
 
 ---
 
-## ⚙️ How to Run Locally
+## How to Run Locally
 
-### 1️⃣ Prerequisites
+### 1 Prerequisites
 
 * Node.js (v18+ recommended)
 * PostgreSQL
@@ -126,7 +126,7 @@ temp/backend/Library Management System Backend/app/
 
 ---
 
-### 2️⃣ Clone the Repository
+### 2 Clone the Repository
 
 ```bash
 git clone <repo-url>
@@ -135,7 +135,7 @@ cd <your-project-name>
 
 ---
 
-### 3️⃣ Install Dependencies
+### 3 Install Dependencies
 
 Do install dependencies for the frontend and backend by:
 
@@ -157,7 +157,7 @@ npm install
 
 ---
 
-### 4️⃣ Setup Environment Variables
+### 4 Setup Environment Variables
 
 Create a `.env` file in the project root (Check the project structure stated above):
 
@@ -181,7 +181,7 @@ node -e "console.log(require('crypto').randomBytes(128).toString('hex'))"
 
 ---
 
-### 5️⃣ Setup Database
+### 5 Setup Database
 
 * Create the database and name it as lms_db
 * Import the lms_db.sql to the database
@@ -190,7 +190,7 @@ node -e "console.log(require('crypto').randomBytes(128).toString('hex'))"
 
 ---
 
-### 6️⃣ Start the Backend
+### 6 Start the Backend
 
 Make sure you are in the folder :
 
@@ -218,7 +218,7 @@ http://localhost:3000
 
 ---
 
-### 7️⃣ Run the Frontend
+### 7 Run the Frontend
 
 Make sure you are in the folder :
 
@@ -238,7 +238,7 @@ http://localhost:5173
 
 ---
 
-## 🔄 CORS Configuration
+## CORS Configuration
 
 Backend allows frontend access:
 
@@ -255,7 +255,7 @@ credentials: "include"
 
 ---
 
-## 🧪 Testing (Manual)
+## Testing (Manual)
 
 * Use Postman to test APIs
 * Validate:
@@ -267,20 +267,10 @@ credentials: "include"
 
 ---
 
-## 📌 Notes
+## Notes
 
 * Backend is **fully completed**
 * Frontend consumes backend APIs directly
 * No mock data
 * Suitable for real-world extension
 
----
-
-## 🏁 Final Outcome
-
-After completing this project:
-
-* ✅ Solid backend engineering foundation
-* ✅ Real-world business logic implementation
-* ✅ Production-style API design
-* ✅ Ready for frontend integration or deployment
