@@ -184,6 +184,10 @@ node -e "console.log(require('crypto').randomBytes(128).toString('hex'))"
 ### 5 Setup Database
 
 * Create the database and name it as lms_db
+* Make the user in the database with:
+  ```bash
+  CREATE USER lms_admin WITH PASSWORD '1234567'
+  ```
 * Import the lms_db.sql to the database
 * Database structure will be ready to use with first admin account created
 * The admin account's email and password can be checked in acc.txt
